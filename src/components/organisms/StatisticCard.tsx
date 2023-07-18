@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import { ReactNode, memo } from 'react';
+import { memo } from 'react';
 
 import { Icon, Typography } from '@/components/atoms';
 import { Footer } from '@/constants/statistics-cards-data';

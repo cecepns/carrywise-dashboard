@@ -4,10 +4,10 @@ import React, { memo } from 'react';
 export interface TypographyProps {
   children: React.ReactNode;
   className?: string;
-  variant?: string;
+  variant?: variant;
 }
 
-export type variant = 
+type variant = 
   | 'h1' 
   | 'h2' 
   | 'h3' 
