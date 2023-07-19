@@ -1,5 +1,5 @@
 import React from 'react';
-import { Home } from '@/pages';
+import { Carrier, Home, Sender } from '@/pages';
 import { Icon } from '@/components/atoms';
 
 export interface PageRoutes {
@@ -24,6 +24,18 @@ export const routes: Layout[] = [
         name: 'home',
         path: '/home',
         element: <Home />,
+      },
+      {
+        icon: <Icon type="solid" name="user" className="text-white"/>,
+        name: 'senders',
+        path: '/senders',
+        element: <Sender />,
+      },
+      {
+        icon: <Icon type="solid" name="user" className="text-white"/>,
+        name: 'carriers',
+        path: '/carriers',
+        element: <Carrier />,
       },
     ],
   },
