@@ -1,6 +1,5 @@
 import { Button } from '@/components/atoms';
 import { Checkbox, Input } from '@/components/molecules';
-
 export const SignIn: React.FC = () => {
   return (
     <div className="flex flex-col bg-clip-border rounded-xl bg-white text-gray-700 shadow-md absolute top-2/4 left-2/4 w-full max-w-[24rem] -translate-y-2/4 -translate-x-2/4">
