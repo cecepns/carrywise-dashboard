@@ -9,14 +9,14 @@ import { useSession } from '@/hooks';
 
 function App() {
   const [getSession, { loading }] = useLazyQuery(GET_SESSION);
-  const [, setSession] = useSession();
+  const [session, setSession] = useSession();
   const navigate = useNavigate();
 
   useEffect(() => {
     const initFn = async () => {
       const sessionToken = localStorage.getItem('sessionToken');
 
-      if(sessionToken) {
+      if(!loading && sessionToken && !session?.id) {
         getSession({
           onCompleted: ({session: res}) => {
             if(res.id) {
@@ -30,7 +30,7 @@ function App() {
           onError: ()=> {
             navigate('auth/signin');
           }
-        })
+        });
       } else if (!sessionToken) {
         navigate('auth/signin');
         localStorage.removeItem('sessionToken');
@@ -40,7 +40,7 @@ function App() {
     initFn();
   },[]);
 
-  if(loading) {
+  if(loading && !session.id) {
     return <Loading />
   };
   

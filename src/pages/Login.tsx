@@ -1,10 +1,11 @@
 import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useMutation } from '@apollo/client';
+import { useLazyQuery, useMutation } from '@apollo/client';
 
-import { SIGN_IN } from '@/graphql';
+import { GET_SESSION, SIGN_IN } from '@/graphql';
 import { Button, Typography } from '@/components/atoms';
 import { Checkbox, Input } from '@/components/molecules';
+import { useSession } from '@/hooks';
 
 const initialFormValues = {
   email: '',
@@ -16,6 +17,8 @@ export const Login: React.FC = () => {
   const [form, setForm] = useState(initialFormValues);
   const [signIn, { loading }] = useMutation(SIGN_IN);
   const navigate = useNavigate();
+  const [session, setSession] = useSession();
+  const [getSession] = useLazyQuery(GET_SESSION);
 
   const inputChangeHandler = useCallback(
     (name: string) => (value: string | boolean) => {
@@ -33,14 +36,28 @@ export const Login: React.FC = () => {
         }
       },
       onCompleted: async ({ signIn: res }) => {
-        localStorage.setItem('sessionToken', res.token.session);
-        navigate('/dashboard/home');
+       await localStorage.setItem('sessionToken', res.token.session);
+        if (res?.token?.session) {
+          getSession({
+            onCompleted: ({session: currentSession}) => {
+              if(currentSession.id) {
+                setSession(currentSession);
+                navigate('/dashboard/home');
+              } else {
+                navigate('auth/signin');
+              }
+            },
+            onError: ()=> {
+              navigate('auth/signin');
+            }
+          })
+        }
       },
       onError: (err) => {
-        console.log(err)
+        alert(err);
       }
     })
-  },[form]);
+  },[form, getSession, navigate, setSession]);
   
   return (
     <div className="flex flex-col bg-clip-border rounded-xl bg-white text-gray-700 shadow-md absolute top-2/4 left-2/4 w-full max-w-[24rem] -translate-y-2/4 -translate-x-2/4">
