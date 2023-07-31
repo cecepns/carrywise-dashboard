@@ -17,7 +17,7 @@ export const Login: React.FC = () => {
   const [form, setForm] = useState(initialFormValues);
   const [signIn, { loading }] = useMutation(SIGN_IN);
   const navigate = useNavigate();
-  const [session, setSession] = useSession();
+  const [, setSession] = useSession();
   const [getSession] = useLazyQuery(GET_SESSION);
 
   const inputChangeHandler = useCallback(
