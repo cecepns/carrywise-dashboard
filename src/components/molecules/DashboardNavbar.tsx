@@ -1,4 +1,4 @@
-import { useLocation, Link, useNavigate } from 'react-router-dom';
+import { useLocation, Link } from 'react-router-dom';
 
 import { Breadcrumb, Button, Icon, Typography } from '@/components/atoms';
 import { useSession, useSideNav } from '@/hooks';

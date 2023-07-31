@@ -12,7 +12,7 @@ const initialFormValues = {
   authType: false,
 };
 
-export const Signin: React.FC = () => {
+export const Login: React.FC = () => {
   const [form, setForm] = useState(initialFormValues);
   const [signIn, { loading }] = useMutation(SIGN_IN);
   const navigate = useNavigate();
