@@ -1,5 +1,5 @@
 import React from 'react';
-import { Carrier, Home, Sender, SignIn } from '@/pages';
+import { Carrier, Home, Sender, Signin } from '@/pages';
 import { Icon } from '@/components/atoms';
 
 export interface PageRoutes {
@@ -46,7 +46,7 @@ export const routes: Layout[] = [
         icon: <Icon type="solid" name="user" className="text-white"/>,
         name: 'signin',
         path: '/signin',
-        element: <SignIn />,
+        element: <Signin />,
       },
     ]
   }
