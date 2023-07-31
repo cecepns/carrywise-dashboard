@@ -9,3 +9,40 @@ export const SIGN_IN = gql`
     }
   }
 `;
+
+export const GET_SESSION = gql`
+  query Session {
+    session {
+      id
+      authType
+      email
+      firstname
+      lastname
+      gender
+      country
+      phone
+      referenceCode
+      url {
+        image
+        idCard
+        transportLicense
+      }
+      # user only
+      birthdate
+      address {
+        location
+        coordinate
+      }
+      # carrier only
+      company {
+        name
+        address {
+          location
+          coordinate
+        }
+      }
+      fleetType
+      vat
+    }
+  }
+`;

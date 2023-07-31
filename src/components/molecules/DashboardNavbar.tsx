@@ -1,8 +1,13 @@
-import { useLocation, Link } from 'react-router-dom';
-import { Breadcrumb, Typography } from '@/components/atoms';
+import { useLocation, Link, useNavigate } from 'react-router-dom';
+
+import { Breadcrumb, Button, Icon, Typography } from '@/components/atoms';
+import { useSession, useSideNav } from '@/hooks';
 
 export const DashboardNavbar = () => {
   const { pathname } = useLocation();
+  const [, setOpenSideNav] = useSideNav();
+  const [session] = useSession();
+
   const [layout, page] = pathname.split('/').filter((el) => el);
 
   return (
@@ -26,6 +31,21 @@ export const DashboardNavbar = () => {
           <Typography className="text-gray-900 block antialiased tracking-normal font-sans text-base font-semibold leading-relaxed">
             {page}
           </Typography>
+        </div>
+        <div className="flex items-center justify-end">
+          <div className="flex space-x-6">
+            <div className="flex items-center">
+              <Icon type="solid" name="user" size="1x" className="text-black-500 mr-2"/>
+              <div className="flex min-w-[50px] w-max">
+                <Typography variant="small">Hi</Typography>
+                <Typography className="font-bold" variant="small">{", "} {session?.firstname} </Typography>
+              </div>
+            </div>
+
+            <Button variant="text" className="p-0 block lg:hidden" onClick={setOpenSideNav}>
+              <Icon type="solid" name="bars" className="text-gray-500"/>
+            </Button>
+          </div>
         </div>
       </div>
     </div>

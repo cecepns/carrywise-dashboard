@@ -1,11 +1,12 @@
 import {
   GlobalProviderProps,
   GlobalStateContextProps,
+  SessionState,
   initialStoreValue
 } from '@/constants';
 import { createContext, useContext, useState } from 'react';
 
-const GlobalStateContext = createContext<GlobalStateContextProps | undefined>(undefined);
+const GlobalStateContext = createContext<GlobalStateContextProps | any>(undefined);
 
 export const GlobalStateProvider: React.FC<GlobalProviderProps> = ({ children }) => {
   const [valueStore, dispatch] = useState(initialStoreValue);
@@ -37,6 +38,26 @@ export const useConfigurator = (): [boolean, typeof setter] => {
   return [objectStore, setter];
 };
 
+export const useActiveConfigurator = (): [string, typeof setter] => {
+  const store = useContext(GlobalStateContext);
+  const key = 'activeConfigurator';
+
+  if (!store) {
+    throw Error(`cannot find store with key: ${key}`);
+  }
+
+  const objectStore = store.valueStore[key];
+  
+  const setter = (value: string) => {
+    store.dispatch({ ...store.valueStore, openConfigurator: !store.valueStore.openConfigurator, [key]: value });
+    console.log('INIT ACTIVE CONFIGURATOR');
+    console.log(store.valueStore);
+  };
+
+  return [objectStore, setter];
+};
+
+
 export const useSideNav = (): [boolean, typeof setter] => {
   const store = useContext(GlobalStateContext);
   const key = 'openSideNav';
@@ -54,20 +75,18 @@ export const useSideNav = (): [boolean, typeof setter] => {
   return [objectStore, setter];
 };
 
-export const useActiveConfigurator = (): [string, typeof setter] => {
+export const useSession = (): [SessionState, typeof setter] => {
   const store = useContext(GlobalStateContext);
-  const key = 'activeConfigurator';
+  const key = 'session';
 
   if (!store) {
     throw Error(`cannot find store with key: ${key}`);
   }
 
   const objectStore = store.valueStore[key];
-  
-  const setter = (value: string) => {
-    store.dispatch({ ...store.valueStore, openConfigurator: !store.valueStore.openConfigurator, [key]: value });
-    console.log('INIT ACTIVE CONFIGURATOR');
-    console.log(store.valueStore);
+
+  const setter = (session:SessionState) => {
+    store.dispatch({ ...store.valueStore, [key]: session });
   };
 
   return [objectStore, setter];

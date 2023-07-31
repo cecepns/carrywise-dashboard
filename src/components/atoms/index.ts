@@ -1,4 +1,5 @@
-export * from './Typography';
-export * from './Icon';
 export * from './Button';
 export * from './BreadCrumbs';
+export * from './Icon';
+export * from './Loading';
+export * from './Typography';

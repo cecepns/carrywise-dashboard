@@ -1,5 +1,5 @@
-import React, { memo } from 'react';
-import { Link, NavLink } from 'react-router-dom';
+import React, { memo, useCallback } from 'react';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 
 import classNames from 'classnames';
 
@@ -12,8 +12,13 @@ export interface SidenavProps {
 }
 
 export const Sidenav: React.FC<SidenavProps> = memo(({ routes }) => {
-
   const [openSideNav, setOpenSideNav] = useSideNav();
+  const navigate = useNavigate();
+
+  const handleLogout = useCallback(() => {
+    localStorage.removeItem('sessionToken');
+    navigate('/auth/signin');
+  },[]);
 
   return (
     <aside
@@ -33,6 +38,7 @@ export const Sidenav: React.FC<SidenavProps> = memo(({ routes }) => {
         <Button 
           className="w-8 max-w-[32px] h-8 max-h-[32px] absolute right-0 top-2 grid rounded-br-none rounded-tl-none xl:hidden"
           onClick={setOpenSideNav}
+          variant="text"
         >
           <Icon name="xmark" className="text-white"/>
         </Button>
@@ -64,6 +70,18 @@ export const Sidenav: React.FC<SidenavProps> = memo(({ routes }) => {
                 </NavLink>
               </li>
             ))}
+            <li>
+            <Button
+                className="flex items-center gap-4 p-4 capitalize text-white mb-2"
+                variant="text"
+                onClick={handleLogout}
+              >
+                <Icon name="right-from-bracket"/>
+                <Typography>
+                  Logout
+                </Typography>
+              </Button>
+            </li>
           </ul>
         ))}
       </div>

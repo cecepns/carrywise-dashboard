@@ -7,6 +7,7 @@ interface InputProps {
   onChange?: (value: string) => void;
   inputClassName?: string;
   className?: string;
+  type?: string;
   icon?: React.ReactNode;
 }
 
@@ -16,6 +17,7 @@ export const Input: React.FC<InputProps> = memo(({
   onChange,
   icon,
   className,
+  type = "text",
   inputClassName
 }) => {
 
@@ -24,7 +26,7 @@ export const Input: React.FC<InputProps> = memo(({
       if(onChange) {
         onChange(event.target.value);
       }
-    }, []);
+    }, [onChange, value]);
 
   const wrapperClass = classNames(
     'relative w-full min-w-[200px] h-10', {
@@ -44,7 +46,7 @@ export const Input: React.FC<InputProps> = memo(({
       <input
         className={inputClass}
         id={label}
-        type="text"
+        type={type}
         value={value}
         onChange={handleInputChange}
         placeholder=" "

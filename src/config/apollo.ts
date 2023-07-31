@@ -15,7 +15,7 @@ import { setContext } from '@apollo/client/link/context';
     if (graphQLErrors)
       graphQLErrors.forEach(({ message }) => {
         if (message === 'Context creation failed: Session token expired') {
-          // Cookies.remove('metaquip-session');
+          localStorage.removeItem('sessionToken');
         }
       });
     if (networkError) console.log(`[Network error]: ${networkError}`);
@@ -23,7 +23,7 @@ import { setContext } from '@apollo/client/link/context';
 
   const authLink = setContext(async ctx => {
     try {
-      const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzZXNzaW9uSWQiOiI2NDYzNGZlOWM3OWYzZjEzM2YyZTFlZTIiLCJzZXNzaW9uVHlwZSI6InNlbmRlciIsImlhdCI6MTY5MDc5ODE2OCwiZXhwIjoxNjkwODg0NTY4fQ.j7fDNHK98XSX2m0G2_jbuNSqeZzsaB-efl4Po6aKkaI';
+      const token = localStorage.getItem('sessionToken');
       if (token) {
         return {
           headers: {
