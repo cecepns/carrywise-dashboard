@@ -41,7 +41,7 @@ import { setContext } from '@apollo/client/link/context';
   
   
   const httpLink = createHttpLink({
-    uri: 'https://rohd0c5rac.execute-api.eu-west-2.amazonaws.com/graphql-carrywise-api/graphql',
+    uri: 'https://rohd0c5rac.execute-api.eu-west-2.amazonaws.com/carrywise/graphql',
   });
   
   export const client = new ApolloClient({
