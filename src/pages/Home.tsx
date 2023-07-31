@@ -17,13 +17,13 @@ export const Home: React.FC = () => {
         <StatisticsCard
           title="Total Carriers"
           icon="user"
-          value={counterSenders}
+          value={counterCarriers}
           color="green"
         />
         <StatisticsCard
           title="Total Senders"
           icon="user"
-          value={counterCarriers}
+          value={counterSenders}
           color="blue"
         />
       </div>

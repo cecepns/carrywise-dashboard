@@ -40,7 +40,7 @@ export const Carrier: React.FC = () => {
     <div className="mt-12">
       <div>
         <Typography>
-          Data Sender
+          Data Carriers
         </Typography>
         <Table columns={columnsCarrier} data={dataCarriers}/>
       </div>

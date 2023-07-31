@@ -23,7 +23,7 @@ import { setContext } from '@apollo/client/link/context';
 
   const authLink = setContext(async ctx => {
     try {
-      const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzZXNzaW9uSWQiOiI2NDYzNGZlOWM3OWYzZjEzM2YyZTFlZTIiLCJzZXNzaW9uVHlwZSI6InNlbmRlciIsImlhdCI6MTY4OTY4NTMxNCwiZXhwIjoxNjg5NzcxNzE0fQ.CSBbBcNq3ivqjmI5c_BhvpfvakdFNLN9QNG6fFdXJ00';
+      const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzZXNzaW9uSWQiOiI2NDYzNGZlOWM3OWYzZjEzM2YyZTFlZTIiLCJzZXNzaW9uVHlwZSI6InNlbmRlciIsImlhdCI6MTY5MDc5ODE2OCwiZXhwIjoxNjkwODg0NTY4fQ.j7fDNHK98XSX2m0G2_jbuNSqeZzsaB-efl4Po6aKkaI';
       if (token) {
         return {
           headers: {
@@ -41,7 +41,7 @@ import { setContext } from '@apollo/client/link/context';
   
   
   const httpLink = createHttpLink({
-    uri: 'http://13.42.19.157/graphql',
+    uri: 'https://rohd0c5rac.execute-api.eu-west-2.amazonaws.com/graphql-carrywise-api/graphql',
   });
   
   export const client = new ApolloClient({

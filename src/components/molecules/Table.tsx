@@ -12,8 +12,8 @@ export const Table: React.FC<TableProps> = memo(({
 }) => {
   const getValueByAccessor = (obj:any, accessor: string) => {
     const keys = accessor.split('.');
-    const keysReduce = keys.reduce((acc, key) => (acc ? acc[key] : ''), obj);
-    return keysReduce || '-'
+    const resultKeys = keys.reduce((acc, key) => (acc ? acc[key] : ''), obj);
+    return resultKeys || '-'
   };
 
   return (

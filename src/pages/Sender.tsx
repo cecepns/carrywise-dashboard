@@ -5,11 +5,15 @@ import { GET_SENDERLIST } from '@/graphql';
 import { useQuery } from '@apollo/client';
 
 export const Sender: React.FC = () => {
-  const { data } = useQuery(GET_SENDERLIST);
+  const { data } = useQuery(GET_SENDERLIST, {
+    variables: {
+      filter: {
+        sort: 'desc',
+      }
+    }
+  });
 
   const dataSenders = useMemo(() => data?.senderList, [data]);
-
-  console.log(dataSenders);
 
   const columnsCarrier = useMemo(() => [
     {
@@ -42,7 +46,7 @@ export const Sender: React.FC = () => {
     <div className="mt-12">
       <div>
         <Typography>
-          Data Sender
+          Data Senders
         </Typography>
         <Table columns={columnsCarrier} data={dataSenders}/>
       </div>
