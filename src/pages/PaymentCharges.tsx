@@ -16,15 +16,15 @@ export const PaymentCharges: React.FC = () => {
     {
       Header: 'Amount',
       accessor: 'amount',
-      Cell: ({ cell }) => (
-        <span className="text-bold">€{(cell.amount / 100).toFixed(2)}</span>
+      Cell: ({ cell }: any) => (
+        <span className="text-bold">€{(cell?.amount / 100).toFixed(2)}</span>
       ),
     },
     {
       Header: 'Status',
       accessor: 'status',
-      Cell: ({ cell }) => (
-        <span className="p-1 text-white bg-green-600 rounded-md">{cell.status}</span>
+      Cell: ({ cell }: any) => (
+        <span className="p-1 text-white bg-green-600 rounded-md">{cell?.status}</span>
       ),
     },
     {
