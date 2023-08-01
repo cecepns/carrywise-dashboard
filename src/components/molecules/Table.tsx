@@ -17,7 +17,7 @@ export const Table: React.FC<TableProps> = memo(({
       if (key === 'no') {
         return idx + 1;
       }
-      return result ? result[key] : undefined;
+      return result[key] || '-';
     }, obj);
   };
   
