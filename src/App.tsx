@@ -19,7 +19,7 @@ function App() {
       if(!loading && sessionToken && !session?.id) {
         getSession({
           onCompleted: ({ session: res }) => {
-            if(res.id) {
+            if(res?.id) {
               console.log(res);
               navigate('dashboard/home');
               setSession(res);
