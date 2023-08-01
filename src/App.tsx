@@ -38,7 +38,7 @@ function App() {
     };
     
     initFn();
-  },[]);
+  },[session?.id, loading, setSession, getSession]);
 
   if(loading && !session.id) {
     return <Loading />
