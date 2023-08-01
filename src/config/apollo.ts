@@ -14,7 +14,7 @@ export const cache = new InMemoryCache({
 const errorLink = onError(({ graphQLErrors, networkError }) => {
   if (graphQLErrors)
     graphQLErrors.forEach(({ message }) => {
-      if (message === 'Context creation failed: Session token expired') {
+      if (message === 'Context creation failed: Session token expired' || message === 'Request Unauthorized.') {
         localStorage.removeItem('sessionToken');
       }
     });
