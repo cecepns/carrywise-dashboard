@@ -18,7 +18,7 @@ function App() {
 
       if(!loading && sessionToken && !session?.id) {
         getSession({
-          onCompleted: ({session: res}) => {
+          onCompleted: ({ session: res }) => {
             if(res.id) {
               console.log(res);
               navigate('dashboard/home');
@@ -34,15 +34,15 @@ function App() {
       } else if (!sessionToken) {
         navigate('auth/signin');
         localStorage.removeItem('sessionToken');
-      };
+      }
     };
     
     initFn();
-  },[session?.id, loading, setSession, getSession]);
+  }, [session?.id, loading, setSession, getSession, navigate]);
 
   if(loading && !session.id) {
-    return <Loading />
-  };
+    return <Loading />;
+  }
   
   return (
     <Routes>
