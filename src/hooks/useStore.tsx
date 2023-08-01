@@ -1,9 +1,9 @@
 import {
   GlobalProviderProps,
   GlobalStateContextProps,
-  SessionState,
   initialStoreValue
 } from '@/constants';
+import { Session } from '@/generated/graphql';
 import { createContext, useContext, useState } from 'react';
 
 const GlobalStateContext = createContext<GlobalStateContextProps | any>(undefined);
@@ -57,7 +57,6 @@ export const useActiveConfigurator = (): [string, typeof setter] => {
   return [objectStore, setter];
 };
 
-
 export const useSideNav = (): [boolean, typeof setter] => {
   const store = useContext(GlobalStateContext);
   const key = 'openSideNav';
@@ -75,7 +74,7 @@ export const useSideNav = (): [boolean, typeof setter] => {
   return [objectStore, setter];
 };
 
-export const useSession = (): [SessionState, typeof setter] => {
+export const useSession = (): [Session, typeof setter] => {
   const store = useContext(GlobalStateContext);
   const key = 'session';
 
@@ -85,7 +84,7 @@ export const useSession = (): [SessionState, typeof setter] => {
 
   const objectStore = store.valueStore[key];
 
-  const setter = (session:SessionState) => {
+  const setter = (session:Session) => {
     store.dispatch({ ...store.valueStore, [key]: session });
   };
 

@@ -1,14 +1,14 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
-import { useLazyQuery } from '@apollo/client';
 
-import { GET_SESSION } from '@/graphql';
 import { Auth, Dashboard } from '@/layouts';
 import { Loading } from '@/components/atoms';
 import { useSession } from '@/hooks';
+import { useSessionLazyQuery } from '@/generated/graphql';
 
 function App() {
-  const [getSession, { loading }] = useLazyQuery(GET_SESSION);
+  const [isInit, setIsInit] = useState<boolean>(false);
+  const [getSession, { loading }] = useSessionLazyQuery();
   const [session, setSession] = useSession();
   const navigate = useNavigate();
 
@@ -36,11 +36,13 @@ function App() {
         navigate('auth/signin');
       }
     };
-    
-    initFn();
-  }, [session?.id, loading, setSession, getSession, navigate]);
+    if (!isInit) {
+      setIsInit(true);
+      initFn();
+    }
+  }, [session?.id, loading, setSession, getSession, navigate, isInit]);
 
-  if(loading && !session.id) {
+  if(loading) {
     return <Loading />;
   }
   
