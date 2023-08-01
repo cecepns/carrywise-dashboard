@@ -1,6 +1,8 @@
+import { useMemo } from 'react';
+import moment from 'moment';
+
 import { Typography } from '@/components/atoms';
 import { Table } from '@/components/molecules';
-import { useMemo } from 'react';
 import { useStripeChargetListQuery } from '@/generated/graphql';
 
 export const PaymentCharges: React.FC = () => {
@@ -41,7 +43,10 @@ export const PaymentCharges: React.FC = () => {
     },
     {
       Header: 'Date',
-      accessor: 'date',
+      accessor: 'created',
+      Cell: ({ cell }: any) => (
+        <span>{moment(cell.created).format('MM/DD/YYYY')}</span>
+      ),
     },
   ], []);
 

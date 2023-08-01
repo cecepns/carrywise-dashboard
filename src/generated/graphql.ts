@@ -629,7 +629,7 @@ export type StripeChargetListQueryVariables = Exact<{
 }>;
 
 
-export type StripeChargetListQuery = { __typename?: 'Query', stripeChargeList?: Array<{ __typename?: 'StripeCharge', id?: string | null, status?: string | null, amount?: number | null, currency?: string | null, billing_details?: { __typename?: 'StripeBillingDetail', email?: string | null, name?: string | null, phone?: string | null, address?: { __typename?: 'StripeBillindDetailAddress', city?: string | null, country?: string | null, line1?: string | null, line2?: string | null, postal_code?: string | null } | null } | null } | null> | null };
+export type StripeChargetListQuery = { __typename?: 'Query', stripeChargeList?: Array<{ __typename?: 'StripeCharge', id?: string | null, status?: string | null, amount?: number | null, currency?: string | null, created?: any | null, billing_details?: { __typename?: 'StripeBillingDetail', email?: string | null, name?: string | null, phone?: string | null, address?: { __typename?: 'StripeBillindDetailAddress', city?: string | null, country?: string | null, line1?: string | null, line2?: string | null, postal_code?: string | null } | null } | null } | null> | null };
 
 export type GetSenderListQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -745,6 +745,7 @@ export const StripeChargetListDocument = gql`
     status
     amount
     currency
+    created
     billing_details {
       email
       name

@@ -7,6 +7,7 @@ export const GET_STRIPE_CHARGERLIST = gql`
       status
       amount
       currency
+      created
       billing_details {
         email
         name

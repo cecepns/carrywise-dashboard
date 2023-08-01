@@ -47,7 +47,7 @@ export const Table: React.FC<TableProps> = memo(({
               <tr key={_idx}>
                 {(columns || []).map((column, _idxColumn) => (
                   <td key={_idxColumn} className="py-3 px-5 border-b border-blue-gray-50">
-                    <p className="block antialiased font-sans text-xs font-semibold text-blue-gray-600">
+                    <p className="block antialiased font-sans text-xs/[13px] text-blue-gray-600">
                       {column.Cell ? column.Cell({ cell:row }) : getNestedValue(row, column.accessor, _idx)}
                     </p>
                   </td>
