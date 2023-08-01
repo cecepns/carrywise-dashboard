@@ -31,9 +31,9 @@ function App() {
             navigate('auth/signin');
           }
         });
-      } else if (!sessionToken) {
-        navigate('auth/signin');
+      } else if (!loading && !sessionToken) {
         localStorage.removeItem('sessionToken');
+        navigate('auth/signin');
       }
     };
     
