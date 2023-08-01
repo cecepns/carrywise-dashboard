@@ -3,19 +3,24 @@ import { Typography } from '@/components/atoms';
 
 export interface TableProps {
   columns: any[];
-  data: any[];
+  data: any[] | undefined | null;
 }
 
 export const Table: React.FC<TableProps> = memo(({
   columns,
   data
 }) => {
-  const getValueByAccessor = (obj:any, accessor: string) => {
+  
+  const getNestedValue = (obj:any, accessor:string, idx:number) => {
     const keys = accessor.split('.');
-    const resultKeys = keys.reduce((acc, key) => (acc ? acc[key] : ''), obj);
-    return resultKeys || '-'
+    return keys.reduce((result, key) => {
+      if (key === 'no') {
+        return idx + 1;
+      }
+      return result ? result[key] : undefined;
+    }, obj);
   };
-
+  
   return (
     <div className="overflow-x-auto">
       <div className="p-6 overflow-x-scroll px-0 pt-0 pb-2">
@@ -43,7 +48,7 @@ export const Table: React.FC<TableProps> = memo(({
                 {(columns || []).map((column, _idxColumn) => (
                   <td key={_idxColumn} className="py-3 px-5 border-b border-blue-gray-50">
                     <p className="block antialiased font-sans text-xs font-semibold text-blue-gray-600">
-                      {column.accessor === 'no' ? (_idx + 1) : getValueByAccessor(row, column.accessor)}
+                      {column.Cell ? column.Cell({ cell:row }) : getNestedValue(row, column.accessor, _idx)}
                     </p>
                   </td>
                 ))}

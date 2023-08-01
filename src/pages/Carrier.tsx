@@ -1,11 +1,10 @@
 import { Typography } from '@/components/atoms';
 import { Table } from '@/components/molecules';
 import { useMemo } from 'react';
-import { GET_CARRIERLIST } from '@/graphql';
-import { useQuery } from '@apollo/client';
+import { useGetCarrierListQuery } from '@/generated/graphql';
 
 export const Carrier: React.FC = () => {
-  const { data } = useQuery(GET_CARRIERLIST);
+  const { data } = useGetCarrierListQuery();
 
   const dataCarriers = useMemo(() => data?.carrierList, [data]);
 

@@ -1,17 +1,10 @@
 import { Typography } from '@/components/atoms';
 import { Table } from '@/components/molecules';
 import { useMemo } from 'react';
-import { GET_SENDERLIST } from '@/graphql';
-import { useQuery } from '@apollo/client';
+import { useGetSenderListQuery } from '@/generated/graphql';
 
 export const Sender: React.FC = () => {
-  const { data } = useQuery(GET_SENDERLIST, {
-    variables: {
-      filter: {
-        sort: 'desc',
-      }
-    }
-  });
+  const { data } = useGetSenderListQuery();
 
   const dataSenders = useMemo(() => data?.senderList, [data]);
 

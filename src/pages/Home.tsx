@@ -1,12 +1,11 @@
 import { StatisticsCard } from '@/components/organisms';
 import { useMemo } from 'react';
-import { GET_CARRIERLIST, GET_SENDERLIST } from '@/graphql';
-import { useQuery } from '@apollo/client';
+import { useGetCarrierListQuery, useGetSenderListQuery } from '@/generated/graphql';
 
 export const Home: React.FC = () => {
 
-  const { data: dataSenders } = useQuery(GET_SENDERLIST);
-  const { data: dataCarriers } = useQuery(GET_CARRIERLIST);
+  const { data: dataSenders } = useGetSenderListQuery();
+  const { data: dataCarriers } = useGetCarrierListQuery();
 
   const counterSenders = useMemo(() => dataSenders?.senderList?.length ?? 0, [dataSenders]);
   const counterCarriers = useMemo(() => dataCarriers?.carrierList?.length ?? 0, [dataCarriers]);
