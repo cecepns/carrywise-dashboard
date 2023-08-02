@@ -4,4 +4,5 @@ export * from './DashboardNavbar';
 export * from './Input';
 export * from './SideNav';
 export * from './UserCard';
+export * from './RouteTimeline';
 export * from './Table';

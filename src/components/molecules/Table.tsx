@@ -1,18 +1,25 @@
 import React, { memo } from 'react';
 import { Typography } from '@/components/atoms';
 
-export interface TableProps {
-  columns: any[];
-  data: any[] | undefined | null;
+export interface IColumnType<T> {
+  accessor: string;
+  Header?: string;
+  Cell?: (cell: T) => void;
 }
 
-export const Table: React.FC<TableProps> = memo(({
+export interface TableProps<T> {
+  columns: IColumnType<T>[];
+  data: T[];
+}
+
+export const Table: React.FC<TableProps<T>> = memo(({
   columns,
   data
 }) => {
   
   const getNestedValue = (obj:any, accessor:string, idx:number) => {
     const keys = accessor.split('.');
+    
     return keys.reduce((result, key) => {
       if (key === 'no') {
         return idx + 1;
@@ -47,9 +54,9 @@ export const Table: React.FC<TableProps> = memo(({
               <tr key={_idx}>
                 {(columns || []).map((column, _idxColumn) => (
                   <td key={_idxColumn} className="py-3 px-5 border-b border-blue-gray-50">
-                    <p className="block antialiased font-sans text-xs/[13px] text-blue-gray-600">
-                      {column.Cell ? column.Cell({ cell:row }) : getNestedValue(row, column.accessor, _idx)}
-                    </p>
+                    <div className="block antialiased font-sans text-xs/[13px] text-blue-gray-600">
+                      {column.Cell ? column.Cell(row) : getNestedValue(row, column?.accessor, _idx)}
+                    </div>
                   </td>
                 ))}
               </tr>

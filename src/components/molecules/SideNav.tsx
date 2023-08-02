@@ -18,7 +18,7 @@ export const Sidenav: React.FC<SidenavProps> = memo(({ routes }) => {
   const handleLogout = useCallback(() => {
     localStorage.removeItem('sessionToken');
     navigate('/auth/signin');
-  },[]);
+  }, [navigate]);
 
   return (
     <aside

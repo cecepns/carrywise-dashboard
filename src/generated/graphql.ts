@@ -629,7 +629,14 @@ export type StripeChargetListQueryVariables = Exact<{
 }>;
 
 
-export type StripeChargetListQuery = { __typename?: 'Query', stripeChargeList?: Array<{ __typename?: 'StripeCharge', id?: string | null, status?: string | null, amount?: number | null, currency?: string | null, created?: any | null, billing_details?: { __typename?: 'StripeBillingDetail', email?: string | null, name?: string | null, phone?: string | null, address?: { __typename?: 'StripeBillindDetailAddress', city?: string | null, country?: string | null, line1?: string | null, line2?: string | null, postal_code?: string | null } | null } | null } | null> | null };
+export type StripeChargetListQuery = { __typename?: 'Query', stripeChargeList?: Array<{ __typename?: 'StripeCharge', id?: string | null, status?: string | null, amount?: number | null, currency?: string | null, refunded?: boolean | null, receipt_url?: string | null, billing_details?: { __typename?: 'StripeBillingDetail', email?: string | null, name?: string | null, phone?: string | null, address?: { __typename?: 'StripeBillindDetailAddress', city?: string | null, country?: string | null, line1?: string | null, line2?: string | null, postal_code?: string | null } | null } | null } | null> | null };
+
+export type MyTransactionsQueryVariables = Exact<{
+  filter?: InputMaybe<TransactionsFilter>;
+}>;
+
+
+export type MyTransactionsQuery = { __typename?: 'Query', transactions?: Array<{ __typename?: 'Transaction', id?: string | null, code?: string | null, date?: any | null, time?: string | null, carrierId?: string | null, fleetType?: string | null, carrierFee?: number | null, platformFee?: number | null, total?: number | null, senderRating?: { __typename?: 'Rating', value?: number | null, comment?: string | null } | null, carrierRating?: { __typename?: 'Rating', value?: number | null, comment?: string | null } | null, pickupAddress?: { __typename?: 'Address', location?: string | null, coordinate?: Array<number | null> | null, duration?: number | null } | null, destinationAddress?: { __typename?: 'Address', location?: string | null, coordinate?: Array<number | null> | null, duration?: number | null } | null, stopoverAddresses?: Array<{ __typename?: 'Address', location?: string | null, coordinate?: Array<number | null> | null, duration?: number | null } | null> | null, packages?: Array<{ __typename?: 'Package', image?: string | null, category?: string | null, volumeValue?: number | null, weightValue?: number | null, comment?: string | null } | null> | null, status?: Array<{ __typename?: 'TransactionStatus', name?: StatusEnum | null } | null> | null, carrier?: { __typename?: 'Carrier', firstname?: string | null, lastname?: string | null, phone?: string | null, ratingAverage?: number | null, url?: { __typename?: 'SessionUrl', image?: string | null } | null, ratings?: Array<{ __typename?: 'Rating', value?: number | null } | null> | null } | null, sender?: { __typename?: 'Sender', firstname?: string | null, lastname?: string | null, phone?: string | null, ratingAverage?: number | null, url?: { __typename?: 'SessionUrl', image?: string | null } | null, ratings?: Array<{ __typename?: 'Rating', value?: number | null } | null> | null } | null } | null> | null };
 
 export type GetSenderListQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -745,7 +752,8 @@ export const StripeChargetListDocument = gql`
     status
     amount
     currency
-    created
+    refunded
+    receipt_url
     billing_details {
       email
       name
@@ -789,6 +797,106 @@ export function useStripeChargetListLazyQuery(baseOptions?: Apollo.LazyQueryHook
 export type StripeChargetListQueryHookResult = ReturnType<typeof useStripeChargetListQuery>;
 export type StripeChargetListLazyQueryHookResult = ReturnType<typeof useStripeChargetListLazyQuery>;
 export type StripeChargetListQueryResult = Apollo.QueryResult<StripeChargetListQuery, StripeChargetListQueryVariables>;
+export const MyTransactionsDocument = gql`
+    query MyTransactions($filter: TransactionsFilter) {
+  transactions(filter: $filter) {
+    id
+    code
+    date
+    time
+    carrierId
+    fleetType
+    senderRating {
+      value
+      comment
+    }
+    carrierRating {
+      value
+      comment
+    }
+    pickupAddress {
+      location
+      coordinate
+      duration
+    }
+    destinationAddress {
+      location
+      coordinate
+      duration
+    }
+    stopoverAddresses {
+      location
+      coordinate
+      duration
+    }
+    packages {
+      image
+      category
+      volumeValue
+      weightValue
+      comment
+    }
+    status {
+      name
+    }
+    carrier {
+      firstname
+      lastname
+      phone
+      url {
+        image
+      }
+      ratings {
+        value
+      }
+      ratingAverage
+    }
+    sender {
+      firstname
+      lastname
+      phone
+      url {
+        image
+      }
+      ratings {
+        value
+      }
+      ratingAverage
+    }
+    carrierFee
+    platformFee
+    total
+  }
+}
+    `;
+
+/**
+ * __useMyTransactionsQuery__
+ *
+ * To run a query within a React component, call `useMyTransactionsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMyTransactionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMyTransactionsQuery({
+ *   variables: {
+ *      filter: // value for 'filter'
+ *   },
+ * });
+ */
+export function useMyTransactionsQuery(baseOptions?: Apollo.QueryHookOptions<MyTransactionsQuery, MyTransactionsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<MyTransactionsQuery, MyTransactionsQueryVariables>(MyTransactionsDocument, options);
+      }
+export function useMyTransactionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MyTransactionsQuery, MyTransactionsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<MyTransactionsQuery, MyTransactionsQueryVariables>(MyTransactionsDocument, options);
+        }
+export type MyTransactionsQueryHookResult = ReturnType<typeof useMyTransactionsQuery>;
+export type MyTransactionsLazyQueryHookResult = ReturnType<typeof useMyTransactionsLazyQuery>;
+export type MyTransactionsQueryResult = Apollo.QueryResult<MyTransactionsQuery, MyTransactionsQueryVariables>;
 export const GetSenderListDocument = gql`
     query GetSenderList {
   senderList {

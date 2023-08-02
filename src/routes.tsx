@@ -1,5 +1,5 @@
 import React from 'react';
-import { Carrier, Home, Sender, Login, PaymentCharges } from '@/pages';
+import { Carrier, Home, Sender, Login, PaymentCharges, Trips } from '@/pages';
 import { Icon } from '@/components/atoms';
 
 export interface PageRoutes {
@@ -39,9 +39,15 @@ export const routes: Layout[] = [
       },
       {
         icon: <Icon type="solid" name="cards-blank" className="text-white"/>,
-        name: 'payment',
+        name: 'payments',
         path: '/payment',
         element: <PaymentCharges />,
+      },
+      {
+        icon: <Icon type="solid" name="map-marked" className="text-white"/>,
+        name: 'trips',
+        path: '/trips',
+        element: <Trips />,
       },
     ],
   },

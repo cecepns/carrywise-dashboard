@@ -1,9 +1,10 @@
 import { useMemo } from 'react';
 import moment from 'moment';
+import classNames from 'classnames';
 
-import { Typography } from '@/components/atoms';
+import { Icon, Typography } from '@/components/atoms';
 import { Table } from '@/components/molecules';
-import { useStripeChargetListQuery } from '@/generated/graphql';
+import { StripeCharge, useStripeChargetListQuery } from '@/generated/graphql';
 
 export const PaymentCharges: React.FC = () => {
   const { data } = useStripeChargetListQuery();
@@ -18,16 +19,21 @@ export const PaymentCharges: React.FC = () => {
     {
       Header: 'Amount',
       accessor: 'amount',
-      Cell: ({ cell }: any) => (
-        <span className="text-bold">€{(cell?.amount / 100).toFixed(2)}</span>
+      Cell: (cell: StripeCharge) => (
+        <span className="text-bold">€{(cell?.amount ?? 0 / 100).toFixed(2)}</span>
       ),
     },
     {
       Header: 'Status',
       accessor: 'status',
-      Cell: ({ cell }: any) => (
-        <span className="p-1 text-white bg-green-600 rounded-md">{cell?.status}</span>
-      ),
+      Cell: (cell: StripeCharge) => {
+        const wrapperClass = classNames('p-1 text-white rounded-md', {
+          'bg-red-600': cell.refunded,
+          'bg-green-600': !cell.refunded,
+        });
+        
+        return <span className={wrapperClass}>{cell.refunded ? 'refunded' : 'succeeded'}</span>;
+      },
     },
     {
       Header: 'Email',
@@ -44,11 +50,30 @@ export const PaymentCharges: React.FC = () => {
     {
       Header: 'Date',
       accessor: 'created',
-      Cell: ({ cell }: any) => (
+      Cell: (cell: StripeCharge) => (
         <span>{moment(cell.created).format('MM/DD/YYYY')}</span>
       ),
     },
+    {
+      Header: 'Action',
+      accessor: 'action',
+      Cell: (cell: StripeCharge) => (
+        <div className="flex space-x-2">
+          <a className="flex items-center bg-blue-700 px-2 py-1 rounded-md text-white" href={cell.receipt_url ?? ''} target="_blank">
+            <Icon type="solid" name="eye" className="mr-2"/>
+            Detail
+          </a>
+          {!cell.refunded && (
+            <a className="flex items-center bg-green-700 px-2 py-1 rounded-md text-white" href={cell.receipt_url ?? ''} target="_blank">
+              <Icon type="solid" name="money-bill" className="mr-2"/>
+              Refund
+            </a>)}
+        </div>
+      ),
+    },
   ], []);
+
+  console.log(dataCarriers);
 
   return (
     <div className="mt-12">
