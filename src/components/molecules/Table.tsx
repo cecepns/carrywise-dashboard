@@ -7,12 +7,12 @@ export interface IColumnType<T> {
   Cell?: (cell: T) => void;
 }
 
-export interface TableProps<T> {
-  columns: IColumnType<T>[];
-  data: T[];
+export interface TableProps {
+  columns: any[];
+  data: any[] | undefined | null;
 }
 
-export const Table: React.FC<TableProps<T>> = memo(({
+export const Table: React.FC<TableProps> = memo(({
   columns,
   data
 }) => {
