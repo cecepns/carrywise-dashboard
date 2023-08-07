@@ -2,14 +2,15 @@ import { useMemo } from 'react';
 import moment from 'moment';
 import classNames from 'classnames';
 
-import { Icon, Typography } from '@/components/atoms';
+import { Icon, Loading, Typography } from '@/components/atoms';
 import { Table } from '@/components/molecules';
 import { StripeCharge, useStripeChargetListQuery } from '@/generated/graphql';
+import { convertEuroAmount } from '@/utils';
 
 export const PaymentCharges: React.FC = () => {
-  const { data } = useStripeChargetListQuery();
+  const { data, loading } = useStripeChargetListQuery();
 
-  const dataCarriers = useMemo(() => data?.stripeChargeList ?? [], [data?.stripeChargeList]);
+  const dataPayments = useMemo(() => data?.stripeChargeList ?? [], [data?.stripeChargeList]);
 
   const columnsCarrier = useMemo(() => [
     {
@@ -20,7 +21,7 @@ export const PaymentCharges: React.FC = () => {
       Header: 'Amount',
       accessor: 'amount',
       Cell: (cell: StripeCharge) => (
-        <span className="text-bold">€{(cell?.amount ?? 0 / 100).toFixed(2)}</span>
+        <span className="text-bold">€{convertEuroAmount(cell?.amount ?? 0)}</span>
       ),
     },
     {
@@ -73,7 +74,10 @@ export const PaymentCharges: React.FC = () => {
     },
   ], []);
 
-  console.log(dataCarriers);
+  console.log(dataPayments);
+  if(loading) {
+    return <Loading/>;
+  }
 
   return (
     <div className="mt-12">
@@ -81,7 +85,7 @@ export const PaymentCharges: React.FC = () => {
         <Typography>
           Data Payment Charge
         </Typography>
-        <Table columns={columnsCarrier} data={dataCarriers}/>
+        <Table columns={columnsCarrier} data={dataPayments}/>
       </div>
 
     </div> 

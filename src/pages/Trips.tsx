@@ -66,10 +66,12 @@ export const Trips: React.FC = () => {
       Header: 'Date',
       accessor: 'date',
       Cell: (cell: Transaction) => (
-        <span>{moment(cell.date).format('MM/DD/YYYY')}</span>
+        <span>{moment(cell.date).format('MM-DD-YYYY')}</span>
       ),
     },
   ], []);
+
+  console.log(dataTransactions);
 
   return (
     <div className="mt-12">
