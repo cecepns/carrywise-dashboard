@@ -137,6 +137,7 @@ export type Mutation = {
   signIn?: Maybe<Session>;
   signOut?: Maybe<Response>;
   signUp?: Maybe<Session>;
+  stripeRefundCreate?: Maybe<StripeRefund>;
   updateLanguage?: Maybe<Response>;
   updateNotificationToken?: Maybe<Response>;
   updateProfile?: Maybe<Session>;
@@ -186,6 +187,11 @@ export type MutationSignInArgs = {
 
 export type MutationSignUpArgs = {
   input?: InputMaybe<SignUpInput>;
+};
+
+
+export type MutationStripeRefundCreateArgs = {
+  input?: InputMaybe<StripeRefundCreateInput>;
 };
 
 
@@ -277,6 +283,7 @@ export type Query = {
   session?: Maybe<Session>;
   stripeChargeList?: Maybe<Array<Maybe<StripeCharge>>>;
   stripePaymentList?: Maybe<Array<Maybe<StripePayment>>>;
+  stripeRefundList?: Maybe<Array<Maybe<StripeRefund>>>;
   transaction?: Maybe<Transaction>;
   transactions?: Maybe<Array<Maybe<Transaction>>>;
 };
@@ -299,6 +306,11 @@ export type QueryStripeChargeListArgs = {
 
 export type QueryStripePaymentListArgs = {
   filter?: InputMaybe<StripePaymentListInput>;
+};
+
+
+export type QueryStripeRefundListArgs = {
+  filter?: InputMaybe<StripeRefundListInput>;
 };
 
 
@@ -409,6 +421,7 @@ export type Session = {
   fleetType?: Maybe<Scalars['String']['output']>;
   gender?: Maybe<GenderEnum>;
   id?: Maybe<Scalars['ID']['output']>;
+  isAdmin?: Maybe<Scalars['Boolean']['output']>;
   isVerified?: Maybe<Scalars['Boolean']['output']>;
   lastname?: Maybe<Scalars['String']['output']>;
   phone?: Maybe<Scalars['String']['output']>;
@@ -523,6 +536,25 @@ export type StripePaymentListInput = {
   limit?: InputMaybe<Scalars['Int']['input']>;
 };
 
+export type StripeRefund = {
+  __typename?: 'StripeRefund';
+  amount?: Maybe<Scalars['Float']['output']>;
+  created?: Maybe<Scalars['Date']['output']>;
+  currency?: Maybe<Scalars['String']['output']>;
+  id?: Maybe<Scalars['String']['output']>;
+  reason?: Maybe<Scalars['String']['output']>;
+  receipt_number?: Maybe<Scalars['String']['output']>;
+  status?: Maybe<Scalars['String']['output']>;
+};
+
+export type StripeRefundCreateInput = {
+  chargeId: Scalars['String']['input'];
+};
+
+export type StripeRefundListInput = {
+  limit?: InputMaybe<Scalars['Int']['input']>;
+};
+
 export type Transaction = {
   __typename?: 'Transaction';
   carrier?: Maybe<Carrier>;
@@ -617,12 +649,12 @@ export type SignInMutationVariables = Exact<{
 }>;
 
 
-export type SignInMutation = { __typename?: 'Mutation', signIn?: { __typename?: 'Session', token?: { __typename?: 'SessionToken', session?: string | null } | null } | null };
+export type SignInMutation = { __typename?: 'Mutation', signIn?: { __typename?: 'Session', isAdmin?: boolean | null, token?: { __typename?: 'SessionToken', session?: string | null } | null } | null };
 
 export type SessionQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type SessionQuery = { __typename?: 'Query', session?: { __typename?: 'Session', id?: string | null, authType?: AuthEnum | null, email?: string | null, firstname?: string | null, lastname?: string | null, gender?: GenderEnum | null, country?: string | null, phone?: string | null, referenceCode?: string | null, birthdate?: any | null, fleetType?: string | null, vat?: string | null, url?: { __typename?: 'SessionUrl', image?: string | null, idCard?: string | null, transportLicense?: string | null } | null, address?: { __typename?: 'Address', location?: string | null, coordinate?: Array<number | null> | null } | null, company?: { __typename?: 'SessionCompany', name?: string | null, address?: { __typename?: 'Address', location?: string | null, coordinate?: Array<number | null> | null } | null } | null } | null };
+export type SessionQuery = { __typename?: 'Query', session?: { __typename?: 'Session', id?: string | null, authType?: AuthEnum | null, email?: string | null, firstname?: string | null, lastname?: string | null, gender?: GenderEnum | null, country?: string | null, phone?: string | null, referenceCode?: string | null, isAdmin?: boolean | null, birthdate?: any | null, fleetType?: string | null, vat?: string | null, url?: { __typename?: 'SessionUrl', image?: string | null, idCard?: string | null, transportLicense?: string | null } | null, address?: { __typename?: 'Address', location?: string | null, coordinate?: Array<number | null> | null } | null, company?: { __typename?: 'SessionCompany', name?: string | null, address?: { __typename?: 'Address', location?: string | null, coordinate?: Array<number | null> | null } | null } | null } | null };
 
 export type StripeChargetListQueryVariables = Exact<{
   filter?: InputMaybe<StripeChargeListInput>;
@@ -630,6 +662,20 @@ export type StripeChargetListQueryVariables = Exact<{
 
 
 export type StripeChargetListQuery = { __typename?: 'Query', stripeChargeList?: Array<{ __typename?: 'StripeCharge', id?: string | null, status?: string | null, amount?: number | null, currency?: string | null, refunded?: boolean | null, receipt_url?: string | null, billing_details?: { __typename?: 'StripeBillingDetail', email?: string | null, name?: string | null, phone?: string | null, address?: { __typename?: 'StripeBillindDetailAddress', city?: string | null, country?: string | null, line1?: string | null, line2?: string | null, postal_code?: string | null } | null } | null } | null> | null };
+
+export type StripeRefundListQueryVariables = Exact<{
+  filter?: InputMaybe<StripeRefundListInput>;
+}>;
+
+
+export type StripeRefundListQuery = { __typename?: 'Query', stripeRefundList?: Array<{ __typename?: 'StripeRefund', id?: string | null, status?: string | null, amount?: number | null, currency?: string | null, receipt_number?: string | null } | null> | null };
+
+export type StripeRefundCreateMutationVariables = Exact<{
+  input?: InputMaybe<StripeRefundCreateInput>;
+}>;
+
+
+export type StripeRefundCreateMutation = { __typename?: 'Mutation', stripeRefundCreate?: { __typename?: 'StripeRefund', id?: string | null, status?: string | null, amount?: number | null, currency?: string | null, receipt_number?: string | null } | null };
 
 export type MyTransactionsQueryVariables = Exact<{
   filter?: InputMaybe<TransactionsFilter>;
@@ -655,6 +701,7 @@ export const SignInDocument = gql`
     token {
       session
     }
+    isAdmin
   }
 }
     `;
@@ -696,6 +743,7 @@ export const SessionDocument = gql`
     country
     phone
     referenceCode
+    isAdmin
     url {
       image
       idCard
@@ -797,6 +845,84 @@ export function useStripeChargetListLazyQuery(baseOptions?: Apollo.LazyQueryHook
 export type StripeChargetListQueryHookResult = ReturnType<typeof useStripeChargetListQuery>;
 export type StripeChargetListLazyQueryHookResult = ReturnType<typeof useStripeChargetListLazyQuery>;
 export type StripeChargetListQueryResult = Apollo.QueryResult<StripeChargetListQuery, StripeChargetListQueryVariables>;
+export const StripeRefundListDocument = gql`
+    query StripeRefundList($filter: StripeRefundListInput) {
+  stripeRefundList(filter: $filter) {
+    id
+    status
+    amount
+    currency
+    receipt_number
+    status
+  }
+}
+    `;
+
+/**
+ * __useStripeRefundListQuery__
+ *
+ * To run a query within a React component, call `useStripeRefundListQuery` and pass it any options that fit your needs.
+ * When your component renders, `useStripeRefundListQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useStripeRefundListQuery({
+ *   variables: {
+ *      filter: // value for 'filter'
+ *   },
+ * });
+ */
+export function useStripeRefundListQuery(baseOptions?: Apollo.QueryHookOptions<StripeRefundListQuery, StripeRefundListQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<StripeRefundListQuery, StripeRefundListQueryVariables>(StripeRefundListDocument, options);
+      }
+export function useStripeRefundListLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<StripeRefundListQuery, StripeRefundListQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<StripeRefundListQuery, StripeRefundListQueryVariables>(StripeRefundListDocument, options);
+        }
+export type StripeRefundListQueryHookResult = ReturnType<typeof useStripeRefundListQuery>;
+export type StripeRefundListLazyQueryHookResult = ReturnType<typeof useStripeRefundListLazyQuery>;
+export type StripeRefundListQueryResult = Apollo.QueryResult<StripeRefundListQuery, StripeRefundListQueryVariables>;
+export const StripeRefundCreateDocument = gql`
+    mutation StripeRefundCreate($input: StripeRefundCreateInput) {
+  stripeRefundCreate(input: $input) {
+    id
+    status
+    amount
+    currency
+    receipt_number
+    status
+  }
+}
+    `;
+export type StripeRefundCreateMutationFn = Apollo.MutationFunction<StripeRefundCreateMutation, StripeRefundCreateMutationVariables>;
+
+/**
+ * __useStripeRefundCreateMutation__
+ *
+ * To run a mutation, you first call `useStripeRefundCreateMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useStripeRefundCreateMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [stripeRefundCreateMutation, { data, loading, error }] = useStripeRefundCreateMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useStripeRefundCreateMutation(baseOptions?: Apollo.MutationHookOptions<StripeRefundCreateMutation, StripeRefundCreateMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<StripeRefundCreateMutation, StripeRefundCreateMutationVariables>(StripeRefundCreateDocument, options);
+      }
+export type StripeRefundCreateMutationHookResult = ReturnType<typeof useStripeRefundCreateMutation>;
+export type StripeRefundCreateMutationResult = Apollo.MutationResult<StripeRefundCreateMutation>;
+export type StripeRefundCreateMutationOptions = Apollo.BaseMutationOptions<StripeRefundCreateMutation, StripeRefundCreateMutationVariables>;
 export const MyTransactionsDocument = gql`
     query MyTransactions($filter: TransactionsFilter) {
   transactions(filter: $filter) {

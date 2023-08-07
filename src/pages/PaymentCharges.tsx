@@ -1,18 +1,53 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import moment from 'moment';
 import classNames from 'classnames';
 
-import { Icon, Loading, Typography } from '@/components/atoms';
+import { Button, Icon, Loading, Typography } from '@/components/atoms';
 import { Table } from '@/components/molecules';
-import { StripeCharge, useStripeChargetListQuery } from '@/generated/graphql';
+import { StripeCharge, useStripeChargetListQuery, useStripeRefundListQuery, useStripeRefundCreateMutation } from '@/generated/graphql';
 import { convertEuroAmount } from '@/utils';
+import { ApolloError } from '@apollo/client';
 
 export const PaymentCharges: React.FC = () => {
+  const [activeTab, setActiveTab] = useState(0);
   const { data, loading } = useStripeChargetListQuery();
+  const [refundMutation] = useStripeRefundCreateMutation();
+  const { data: dataRefund } = useStripeRefundListQuery({
+    variables: {
+      filter: {
+        limit: 100
+      }
+    }
+  });
 
-  const dataPayments = useMemo(() => data?.stripeChargeList ?? [], [data?.stripeChargeList]);
+  const dataPayments = useMemo(() => {
+    if(activeTab === 0) {
+      return data?.stripeChargeList ?? [];
+    }
+    if(activeTab === 1) {
+      return dataRefund?.stripeRefundList ?? [];
+    }
+    return [];
+  }, [activeTab, data?.stripeChargeList, dataRefund?.stripeRefundList]);
 
-  const columnsCarrier = useMemo(() => [
+  const handleRefund = useCallback((chargeId:string) => {
+    const promp = confirm('are you sure you want to refund?');
+    console.log(promp);
+
+    if(promp) {
+      refundMutation({
+        variables: {
+          input: {
+            chargeId
+          }
+        },
+        onCompleted: () => alert('successfully refunded'),
+        onError: (err: ApolloError) => alert(err),
+      });
+    }
+  }, [refundMutation]);
+
+  const columnsCharges = useMemo(() => [
     {
       Header: 'No',
       accessor: 'no',
@@ -60,21 +95,58 @@ export const PaymentCharges: React.FC = () => {
       accessor: 'action',
       Cell: (cell: StripeCharge) => (
         <div className="flex space-x-2">
-          <a className="flex items-center bg-blue-700 px-2 py-1 rounded-md text-white" href={cell.receipt_url ?? ''} target="_blank">
+          <a className="flex items-center bg-blue-700 hover:bg-blue-800 px-2 py-1 rounded-md text-white" href={cell.receipt_url ?? ''} target="_blank">
             <Icon type="solid" name="eye" className="mr-2"/>
             Detail
           </a>
           {!cell.refunded && (
-            <a className="flex items-center bg-green-700 px-2 py-1 rounded-md text-white" href={cell.receipt_url ?? ''} target="_blank">
-              <Icon type="solid" name="money-bill" className="mr-2"/>
+            <Button className="w-[100px] items-center bg-green-700 px-2 py-1 rounded-md text-white hover:bg-green-800"
+              onClick={() => handleRefund(cell.id ?? '')}
+            >
+              <Icon type="solid" name="money-bill"/>
               Refund
-            </a>)}
+            </Button>)}
         </div>
+      ),
+    },
+  ], [handleRefund]);
+
+  const columnsRefund = useMemo(() => [
+    {
+      Header: 'No',
+      accessor: 'no',
+    },
+    {
+      Header: 'Id',
+      accessor: 'id',
+    },
+    {
+      Header: 'Amount',
+      accessor: 'amount',
+      Cell: (cell: StripeCharge) => (
+        <span className="text-bold">€{convertEuroAmount(cell?.amount ?? 0)}</span>
+      ),
+    },
+    {
+      Header: 'Status',
+      accessor: 'status'
+    },
+    {
+      Header: 'Date',
+      accessor: 'created',
+      Cell: (cell: StripeCharge) => (
+        <span>{moment(cell.created).format('MM/DD/YYYY')}</span>
       ),
     },
   ], []);
 
-  console.log(dataPayments);
+  const renderTable = useCallback(() => {
+    if(activeTab === 0) {
+      return <Table columns={columnsCharges} data={dataPayments}/>;
+    }
+    return <Table columns={columnsRefund} data={dataPayments}/>;
+  }, [activeTab, columnsCharges, columnsRefund, dataPayments]);
+
   if(loading) {
     return <Loading/>;
   }
@@ -82,10 +154,14 @@ export const PaymentCharges: React.FC = () => {
   return (
     <div className="mt-12">
       <div>
-        <Typography>
+        <Typography className="mb-4">
           Data Payment Charge
         </Typography>
-        <Table columns={columnsCarrier} data={dataPayments}/>
+        <div className="flex w-[130px] space-x-3">
+          <Button variant={activeTab === 0 ? 'primary' : 'text'} onClick={() => setActiveTab(0)}>Charges</Button>
+          <Button variant={activeTab === 1 ? 'primary' : 'text'} onClick={() => setActiveTab(1)}>Refund</Button>
+        </div>
+        {renderTable()}
       </div>
 
     </div> 

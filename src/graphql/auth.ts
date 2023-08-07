@@ -6,6 +6,7 @@ export const SIGN_IN = gql`
       token {
         session
       }
+      isAdmin
     }
   }
 `;
@@ -22,6 +23,7 @@ export const GET_SESSION = gql`
       country
       phone
       referenceCode
+      isAdmin
       url {
         image
         idCard

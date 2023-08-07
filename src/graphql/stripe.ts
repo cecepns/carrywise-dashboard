@@ -24,3 +24,29 @@ export const GET_STRIPE_CHARGERLIST = gql`
     }
   }
 `;
+
+export const GET_STRIPE_ALLREFUND = gql`
+  query StripeRefundList($filter: StripeRefundListInput) {
+    stripeRefundList(filter: $filter) {
+      id
+      status
+      amount
+      currency
+      receipt_number
+      status
+    }
+  }
+`;
+
+export const STRIPE_REFUND_CREATE = gql`
+  mutation StripeRefundCreate($input: StripeRefundCreateInput) {
+    stripeRefundCreate(input: $input) {
+      id
+      status
+      amount
+      currency
+      receipt_number
+      status
+    }
+  }
+`;

@@ -35,12 +35,13 @@ export const Login: React.FC = () => {
         }
       },
       onCompleted: async ({ signIn: res }) => {
-        if(res?.token?.session) {
+        console.log(res);
+        if(res?.token?.session && res.isAdmin) {
           await localStorage.setItem('sessionToken', res.token.session);
           if (res?.token?.session) {
             getSession({
               onCompleted: ({ session: currentSession }) => {
-                if(currentSession?.id) {
+                if(currentSession?.id && currentSession.isAdmin) {
                   setSession(currentSession);
                   navigate('/dashboard/home');
                 } else {
@@ -52,6 +53,8 @@ export const Login: React.FC = () => {
               }
             });
           }
+        } else {
+          alert('You don\'t have access');
         }
       },
       onError: (err) => {
