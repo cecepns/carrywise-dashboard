@@ -41,7 +41,7 @@ export const Sender: React.FC = () => {
         <Typography>
           Data Senders
         </Typography>
-        <Table columns={columnsCarrier} data={dataSenders}/>
+        <Table isConvertExcel columns={columnsCarrier} data={dataSenders}/>
       </div>
 
     </div> 

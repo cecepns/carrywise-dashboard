@@ -41,7 +41,7 @@ export const Carrier: React.FC = () => {
         <Typography>
           Data Carriers
         </Typography>
-        <Table columns={columnsCarrier} data={dataCarriers}/>
+        <Table isConvertExcel columns={columnsCarrier} data={dataCarriers}/>
       </div>
 
     </div> 

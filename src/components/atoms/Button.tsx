@@ -9,7 +9,14 @@ export interface ButtonProps extends React.ComponentProps<'button'> {
   children: React.ReactNode;
 }
 
-export declare type variant = 'gradient' | 'text' | 'primary' | 'danger';
+export declare type variant = 
+  'gradient' 
+  | 'text' 
+  | 'primary' 
+  | 'danger' 
+  | 'success'
+  ;
+
 export declare type size = 'sm' | 'md' | 'lg';
 
 export const Button: React.FC<ButtonProps> = memo(({ children, className, variant = 'primary', disabled, ...props }) => {
@@ -19,7 +26,8 @@ export const Button: React.FC<ButtonProps> = memo(({ children, className, varian
     'bg-gradient-to-tr from-blue-600 to-blue-400 text-white shadow-md shadow-blue-500/20 hover:shadow-lg hover:shadow-blue-500/40 active:opacity-[0.85] w-full': variant === 'gradient',
     'bg-transparent': variant === 'text',
     'bg-red-600 hover:bg-red-700 text-white px-2 py-2 justify-center': variant === 'danger',
-    'bg-blue-500 hover:bg-blue-700 text-white px-2 py-2 justify-center': variant === 'primary'
+    'bg-blue-500 hover:bg-blue-700 text-white px-2 py-2 justify-center': variant === 'primary',
+    'bg-green-500 hover:bg-green-700 text-white px-2 py-2 justify-center': variant === 'success'
   });
   
   return(

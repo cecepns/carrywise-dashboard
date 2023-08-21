@@ -79,6 +79,7 @@ export const Trips: React.FC = () => {
         <Typography>
           Data Trips
         </Typography>
+        <h1>Oke</h1>
         <Table columns={columnsCarrier} data={dataTransactions}/>
       </div>
 
