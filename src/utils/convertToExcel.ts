@@ -1,5 +1,4 @@
 import { downloadExcel } from 'react-export-table-to-excel';
-import { ITablePayload } from 'react-export-table-to-excel/lib/utils/create-table';
 
 export const convertToExcel = (header:string[], body: Array<{
   [key: string]: string | number | boolean;
