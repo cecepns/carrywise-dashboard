@@ -17,7 +17,7 @@ export const Input: React.FC<InputProps> = memo(({
   onChange,
   icon,
   className,
-  type = "text",
+  type = 'text',
   inputClassName
 }) => {
 
@@ -26,7 +26,7 @@ export const Input: React.FC<InputProps> = memo(({
       if(onChange) {
         onChange(event.target.value);
       }
-    }, [onChange, value]);
+    }, [onChange]);
 
   const wrapperClass = classNames(
     'relative w-full min-w-[200px] h-10', {

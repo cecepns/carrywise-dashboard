@@ -58,7 +58,7 @@ export const Trips: React.FC = () => {
       accessor: 'delivery',
       Cell: (cell: Timeline) => (
         <div>
-          <RouteTimeline data={cell} onPress />
+          <RouteTimeline data={cell} />
         </div>
       ),
     },

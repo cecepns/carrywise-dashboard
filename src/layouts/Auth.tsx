@@ -1,5 +1,5 @@
-import { Routes, Route } from "react-router-dom";
-import routes from "@/routes";
+import { Routes, Route } from 'react-router-dom';
+import routes from '@/routes';
 
 export const Auth = ()=> {
   return (
@@ -7,7 +7,7 @@ export const Auth = ()=> {
       <Routes>
         {routes.map(
           ({ layout, pages }) =>
-            layout === "auth" &&
+            layout === 'auth' &&
             pages.map(({ path, element }) => (
               <Route path={path} element={element} />
             ))
@@ -15,4 +15,4 @@ export const Auth = ()=> {
       </Routes>
     </div>
   );
-}
+};

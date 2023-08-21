@@ -44,7 +44,7 @@ export const Sidenav: React.FC<SidenavProps> = memo(({ routes }) => {
         </Button>
       </div>
       <div className="m-4">
-        {routes.map(({ layout, title, pages } : Layout, key:number) => layout === "dashboard" && (
+        {routes.map(({ layout, title, pages } : Layout, key:number) => layout === 'dashboard' && (
           <ul key={key} className="mb-4 flex flex-col gap-1">
             {title && (
               <li className="mx-3.5 mt-4 mb-2">
@@ -53,7 +53,7 @@ export const Sidenav: React.FC<SidenavProps> = memo(({ routes }) => {
                 </Typography>
               </li>
             )}
-            {pages.map(({ icon, name, path }: PageRoutes) => (
+            {pages.map(({ icon, name, path }: PageRoutes) => name && icon && (
               <li key={name}>
                 <NavLink to={`/${layout}${path}`}>
                   {({ isActive }) => (
@@ -71,7 +71,7 @@ export const Sidenav: React.FC<SidenavProps> = memo(({ routes }) => {
               </li>
             ))}
             <li>
-            <Button
+              <Button
                 className="flex items-center gap-4 p-4 capitalize text-white mb-2"
                 variant="text"
                 onClick={handleLogout}
