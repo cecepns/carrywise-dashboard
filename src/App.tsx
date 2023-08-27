@@ -18,6 +18,7 @@ function App() {
 
       if(!loading && sessionToken && !session?.id) {
         getSession({
+          fetchPolicy: 'network-only',
           onCompleted: ({ session: res }) => {
             if(res?.id && res.isAdmin) {
               console.log(res);
