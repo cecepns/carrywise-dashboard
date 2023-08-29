@@ -38,11 +38,11 @@ export const DashboardNavbar = () => {
               <Icon type="solid" name="user" size="1x" className="text-black-500 mr-2"/>
               <div className="flex min-w-[50px] w-max">
                 <Typography variant="small">Hi</Typography>
-                <Typography className="font-bold" variant="small">{", "} {session?.firstname} </Typography>
+                <Typography className="font-bold" variant="small">{', '} {session?.firstname} </Typography>
               </div>
             </div>
 
-            <Button variant="text" className="p-0 block lg:hidden" onClick={setOpenSideNav}>
+            <Button variant="text" className="p-0 block xl:hidden" onClick={setOpenSideNav}>
               <Icon type="solid" name="bars" className="text-gray-500"/>
             </Button>
           </div>
