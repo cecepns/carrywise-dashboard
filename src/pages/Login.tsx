@@ -41,6 +41,8 @@ export const Login: React.FC = () => {
           if (res?.token?.session) {
             getSession({
               onCompleted: ({ session: currentSession }) => {
+                console.log(currentSession?.id);
+                console.log(currentSession?.isAdmin);
                 if(currentSession?.id && currentSession.isAdmin) {
                   setSession(currentSession);
                   navigate('/dashboard/home');
