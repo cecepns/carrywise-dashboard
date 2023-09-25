@@ -175,7 +175,7 @@ export const TravelBulletinCreate: React.FC = () => {
         </Typography>
         <div className="flex space-x-4">
           <Button className="w-[100px] bg-gray-400 hover:bg-gray-600" onClick={() => navigate('/dashboard/travel-bulletin')}> <Icon name="arrow-left"/> Back</Button>
-          <Button className="w-1/2" onClick={handleSubmit} disabled={loading}> <Icon name="plus-circle"/> {loading ? 'Loading...' : 'Add Trips'} </Button>
+          <Button className="w-1/2" onClick={handleSubmit} disabled={loading || !address.destinationAddress.location || !address.pickupAddress.location}> <Icon name="plus-circle"/> {loading ? 'Loading...' : 'Add Trips'} </Button>
         </div>
       </div>
       <div className="grid grid-cols-3 gap-4">
