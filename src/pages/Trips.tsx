@@ -12,7 +12,6 @@ export const Trips: React.FC = () => {
     variables: {
       filter: {
         isDeal: true,
-        isOwned: true,
         minDate: new Date().toDateString(),
       },
     },
