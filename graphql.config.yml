@@ -1,6 +1,7 @@
 overwrite: true
 schema:
-  - https://rohd0c5rac.execute-api.eu-west-2.amazonaws.com/carrywise/graphql
+  # - https://rohd0c5rac.execute-api.eu-west-2.amazonaws.com/carrywise/graphql
+  - http://localhost:4000/graphql
 documents:
   - src/graphql/**/*.ts
 

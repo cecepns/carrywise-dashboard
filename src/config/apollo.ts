@@ -13,11 +13,11 @@ export const cache = new InMemoryCache({
   
 const errorLink = onError(({ graphQLErrors, networkError }) => {
   if (graphQLErrors)
-    localStorage.removeItem('sessionToken');
-    // graphQLErrors.forEach(({ message }) => {
-    //   if (message === 'Context creation failed: Session token expired' || message === 'Request Unauthorized.') {
-    //   }
-    // });
+    graphQLErrors.forEach(({ message }) => {
+      if (message === 'Context creation failed: Session token expired') {
+        localStorage.removeItem('sessionToken');
+      }
+    });
   if (networkError) console.log(`[Network error]: ${networkError}`);
 });
 

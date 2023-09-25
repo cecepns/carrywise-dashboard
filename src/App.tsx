@@ -30,10 +30,11 @@ function App() {
             }
           },
           onError: ()=> {
+            localStorage.removeItem('sessionToken');
             navigate('auth/signin');
           }
         });
-      } else if (!loading && !sessionToken) {
+      } else if (!loading && !sessionToken && !session.id) {
         localStorage.removeItem('sessionToken');
         navigate('auth/signin');
       }

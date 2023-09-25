@@ -15,6 +15,7 @@ export const GET_SESSION = gql`
   query Session {
     session {
       id
+      isAdmin
       authType
       email
       firstname
@@ -23,7 +24,6 @@ export const GET_SESSION = gql`
       country
       phone
       referenceCode
-      isAdmin
       url {
         image
         idCard
@@ -48,3 +48,4 @@ export const GET_SESSION = gql`
     }
   }
 `;
+

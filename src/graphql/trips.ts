@@ -7,16 +7,10 @@ export const GET_TRANSACTIONS = gql`
       code
       date
       time
-      carrierId
+      carrierFee
       fleetType
-      senderRating {
-        value
-        comment
-      }
-      carrierRating {
-        value
-        comment
-      }
+      isSenderRated
+      isCarrierRated
       pickupAddress {
         location
         coordinate

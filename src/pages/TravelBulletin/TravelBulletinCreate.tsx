@@ -1,9 +1,11 @@
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import moment from 'moment';
 
+import { ENV } from '@/utils/env';
 import { Button, Icon, Typography } from '@/components/atoms';
 import { Input, RouteTimeline } from '@/components/molecules';
-import { Address } from '@/generated/graphql';
+import { Address, useCreateCarrierTransactionMutation } from '@/generated/graphql';
 import { AddressApi, InputSearchAddress } from '@/components/organisms';
 
 const initialStopoverValue = (): Address => ({
@@ -13,6 +15,7 @@ const initialStopoverValue = (): Address => ({
 
 export const TravelBulletinCreate: React.FC = () => {
   const [address, setAddress] = useState({
+    date: '',
     pickupAddress: { 
       location: '',
       coordinate: [0, 0],
@@ -25,6 +28,8 @@ export const TravelBulletinCreate: React.FC = () => {
   });
   const [stopover, setStopover] = useState<Address[]>([]);
   const navigate = useNavigate();
+  const [createCarrierTransaction, { loading }] =
+    useCreateCarrierTransactionMutation();
 
   const dataAddress = useMemo(() => {
     if(address.destinationAddress || address.pickupAddress) {
@@ -111,6 +116,57 @@ export const TravelBulletinCreate: React.FC = () => {
     [],
   );
 
+  const handleSubmit = useCallback(async () => {
+
+    const coordinates = [
+      address.pickupAddress?.coordinate?.join(','),
+      ...(stopover ?? []).map(
+        (stopover: Address | null) => {
+          if (stopover?.coordinate) {
+            return stopover?.coordinate?.join(',');
+          }
+          return '';
+        },
+      ),
+      address.destinationAddress?.coordinate?.join(','),
+    ].join(';');
+
+    const raw = await fetch(
+      `${ENV.DIRECTION_API}/directions/v5/mapbox/driving/${coordinates}?access_token=${ENV.MAPBOX_ACCESS_TOKEN}&alternatives=false&geometries=geojson&language=en&overview=simplified&steps=false`,
+    );
+
+    const res = await raw.json();
+    if (res?.routes?.[0]) {
+      const bestRoute = res.routes[0];
+
+      createCarrierTransaction({
+        fetchPolicy: 'network-only',
+        variables: {
+          input: {
+            date: moment().format('YYYY-MM-DD'),
+            time: moment().format('hh:mm'),
+            flexible: false,
+            distance: Number(bestRoute.distance) ?? 0,
+            pickupAddress: address.pickupAddress,
+            destinationAddress: address.destinationAddress,
+            stopoverAddresses: stopover,
+          },
+        },
+        onCompleted: ({ createCarrierTransaction: res }) => {
+          console.log(res);
+          alert('Success add trips');
+          navigate('/dashboard/travel-bulletin');
+        },
+        onError: e => {
+          console.log(e);
+          alert(e);
+        },
+      });
+      
+    }
+    
+  }, [address.destinationAddress, address.pickupAddress, createCarrierTransaction, navigate, stopover]);
+
   return (
     <div className="mt-12">
       <div className="flex justify-between mb-8">
@@ -119,12 +175,12 @@ export const TravelBulletinCreate: React.FC = () => {
         </Typography>
         <div className="flex space-x-4">
           <Button className="w-[100px] bg-gray-400 hover:bg-gray-600" onClick={() => navigate('/dashboard/travel-bulletin')}> <Icon name="arrow-left"/> Back</Button>
-          <Button className="w-[100px]"> <Icon name="plus-circle"/> Add </Button>
+          <Button className="w-1/2" onClick={handleSubmit} disabled={loading}> <Icon name="plus-circle"/> {loading ? 'Loading...' : 'Add Trips'} </Button>
         </div>
       </div>
       <div className="grid grid-cols-3 gap-4">
         <div className="space-y-8 col-span-2">
-          <Input label="Departure day" type="datetime-local"/>
+          <Input label="Departure day" type="datetime-local" onChange={inputChangeHandler('date')}/>
           <InputSearchAddress 
             label="Departure city"
             value={address.pickupAddress.location}

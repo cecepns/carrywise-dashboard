@@ -20,15 +20,7 @@ export type Scalars = {
   Float: { input: number; output: number; }
   Date: { input: any; output: any; }
   JSONObject: { input: any; output: any; }
-};
-
-export type AcceptOrderInput = {
-  carrierId: Scalars['String']['input'];
-  id: Scalars['String']['input'];
-  isSendInvoice?: InputMaybe<Scalars['Boolean']['input']>;
-  language: LangEnum;
-  payment?: InputMaybe<Scalars['JSONObject']['input']>;
-  promoCode?: InputMaybe<Scalars['String']['input']>;
+  SqlID: { input: any; output: any; }
 };
 
 export type Address = {
@@ -42,6 +34,14 @@ export type AddressInput = {
   coordinate?: InputMaybe<Array<InputMaybe<Scalars['Float']['input']>>>;
   duration?: InputMaybe<Scalars['Float']['input']>;
   location?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type ApproveSenderOrderInput = {
+  carrierId: Scalars['SqlID']['input'];
+  isSendInvoice?: InputMaybe<Scalars['Boolean']['input']>;
+  payment?: InputMaybe<Scalars['JSONObject']['input']>;
+  promoCode?: InputMaybe<Scalars['String']['input']>;
+  quotationId: Scalars['SqlID']['input'];
 };
 
 export enum AuthEnum {
@@ -58,7 +58,7 @@ export type Carrier = {
   firstname?: Maybe<Scalars['String']['output']>;
   fleetType?: Maybe<Scalars['String']['output']>;
   gender?: Maybe<GenderEnum>;
-  id?: Maybe<Scalars['ID']['output']>;
+  id?: Maybe<Scalars['SqlID']['output']>;
   lastname?: Maybe<Scalars['String']['output']>;
   phone?: Maybe<Scalars['String']['output']>;
   ratingAverage?: Maybe<Scalars['Int']['output']>;
@@ -69,17 +69,27 @@ export type Carrier = {
   vat?: Maybe<Scalars['String']['output']>;
 };
 
-export type CreateQuotationInput = {
+export type CreateCarrierQuotationInput = {
   date?: InputMaybe<Scalars['Date']['input']>;
   offerPrice: Scalars['Float']['input'];
   time?: InputMaybe<Scalars['String']['input']>;
-  transactionId: Scalars['String']['input'];
+  transactionId: Scalars['SqlID']['input'];
 };
 
-export type CreateTransactionInput = {
+export type CreateCarrierTransactionInput = {
   date: Scalars['Date']['input'];
   destinationAddress: AddressInput;
-  distance: DistanceInput;
+  distance: Scalars['Float']['input'];
+  flexible?: InputMaybe<Scalars['Boolean']['input']>;
+  pickupAddress: AddressInput;
+  stopoverAddresses?: InputMaybe<Array<InputMaybe<AddressInput>>>;
+  time?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type CreateSenderTransactionInput = {
+  date: Scalars['Date']['input'];
+  destinationAddress: AddressInput;
+  distance: Scalars['Float']['input'];
   flexible?: InputMaybe<Scalars['Boolean']['input']>;
   packages?: InputMaybe<Array<InputMaybe<PackageInput>>>;
   pickupAddress: AddressInput;
@@ -89,17 +99,6 @@ export type CreateTransactionInput = {
 
 export type DeleteAccountInput = {
   reason: Scalars['String']['input'];
-};
-
-export type Distance = {
-  __typename?: 'Distance';
-  price?: Maybe<Scalars['Float']['output']>;
-  value?: Maybe<Scalars['Float']['output']>;
-};
-
-export type DistanceInput = {
-  price: Scalars['Float']['input'];
-  value: Scalars['Float']['input'];
 };
 
 export type ForgotPasswordInput = {
@@ -127,13 +126,13 @@ export enum LangEnum {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  acceptOrder?: Maybe<Response>;
-  createQuotation?: Maybe<Response>;
-  createTransaction?: Maybe<Response>;
+  approveSenderOrder?: Maybe<Response>;
+  createCarrierQuotation?: Maybe<Response>;
+  createCarrierTransaction?: Maybe<Response>;
+  createSenderTransaction?: Maybe<Response>;
   deleteAccount?: Maybe<Response>;
   forgotPassword?: Maybe<Response>;
   resetPassword?: Maybe<Response>;
-  setRating?: Maybe<Response>;
   signIn?: Maybe<Session>;
   signOut?: Maybe<Response>;
   signUp?: Maybe<Session>;
@@ -141,22 +140,29 @@ export type Mutation = {
   updateLanguage?: Maybe<Response>;
   updateNotificationToken?: Maybe<Response>;
   updateProfile?: Maybe<Session>;
+  updateRating?: Maybe<Response>;
+  updateTransactionDone?: Maybe<Response>;
   updateVerifiedEmail?: Maybe<Response>;
 };
 
 
-export type MutationAcceptOrderArgs = {
-  input?: InputMaybe<AcceptOrderInput>;
+export type MutationApproveSenderOrderArgs = {
+  input?: InputMaybe<ApproveSenderOrderInput>;
 };
 
 
-export type MutationCreateQuotationArgs = {
-  input?: InputMaybe<CreateQuotationInput>;
+export type MutationCreateCarrierQuotationArgs = {
+  input?: InputMaybe<CreateCarrierQuotationInput>;
 };
 
 
-export type MutationCreateTransactionArgs = {
-  input?: InputMaybe<CreateTransactionInput>;
+export type MutationCreateCarrierTransactionArgs = {
+  input?: InputMaybe<CreateCarrierTransactionInput>;
+};
+
+
+export type MutationCreateSenderTransactionArgs = {
+  input?: InputMaybe<CreateSenderTransactionInput>;
 };
 
 
@@ -172,11 +178,6 @@ export type MutationForgotPasswordArgs = {
 
 export type MutationResetPasswordArgs = {
   input?: InputMaybe<ResetPasswordInput>;
-};
-
-
-export type MutationSetRatingArgs = {
-  input?: InputMaybe<SetRatingInput>;
 };
 
 
@@ -207,6 +208,16 @@ export type MutationUpdateNotificationTokenArgs = {
 
 export type MutationUpdateProfileArgs = {
   input?: InputMaybe<UpdateProfileInput>;
+};
+
+
+export type MutationUpdateRatingArgs = {
+  input?: InputMaybe<UpdateRatingInput>;
+};
+
+
+export type MutationUpdateTransactionDoneArgs = {
+  input?: InputMaybe<UpdateTransactionDoneInput>;
 };
 
 
@@ -278,6 +289,7 @@ export type Query = {
   phoneCodes?: Maybe<Array<Maybe<PhoneCode>>>;
   productCategories?: Maybe<Array<Maybe<ProductCategory>>>;
   promo?: Maybe<Promo>;
+  quotation?: Maybe<Quotation>;
   quotations?: Maybe<Array<Maybe<Quotation>>>;
   senderList?: Maybe<Array<Maybe<Sender>>>;
   session?: Maybe<Session>;
@@ -291,6 +303,11 @@ export type Query = {
 
 export type QueryPromoArgs = {
   filter?: InputMaybe<PromoFilter>;
+};
+
+
+export type QueryQuotationArgs = {
+  filter?: InputMaybe<QuotationFilter>;
 };
 
 
@@ -325,47 +342,46 @@ export type QueryTransactionsArgs = {
 
 export type Quotation = {
   __typename?: 'Quotation';
+  carrier?: Maybe<Carrier>;
   carrierFee?: Maybe<Scalars['Float']['output']>;
-  carrierId?: Maybe<Scalars['ID']['output']>;
-  carrierRating?: Maybe<Rating>;
   code?: Maybe<Scalars['String']['output']>;
   date?: Maybe<Scalars['Date']['output']>;
   destinationAddress?: Maybe<Address>;
-  distance?: Maybe<Distance>;
+  fleetType?: Maybe<Scalars['String']['output']>;
+  fleetVolume?: Maybe<Scalars['Float']['output']>;
   flexible?: Maybe<Scalars['Boolean']['output']>;
-  id?: Maybe<Scalars['ID']['output']>;
+  id?: Maybe<Scalars['SqlID']['output']>;
+  isCarrierRated?: Maybe<Scalars['Boolean']['output']>;
+  isDeal?: Maybe<Scalars['Boolean']['output']>;
+  isDelivered?: Maybe<Scalars['Boolean']['output']>;
+  isExpired?: Maybe<Scalars['Boolean']['output']>;
+  isPaid?: Maybe<Scalars['Boolean']['output']>;
+  isSenderRated?: Maybe<Scalars['Boolean']['output']>;
+  offerDate?: Maybe<Scalars['Date']['output']>;
+  offerTime?: Maybe<Scalars['String']['output']>;
   packages?: Maybe<Array<Maybe<Package>>>;
   pickupAddress?: Maybe<Address>;
   platformFee?: Maybe<Scalars['Float']['output']>;
-  quotation?: Maybe<QuotationOffer>;
   sender?: Maybe<Sender>;
-  senderId?: Maybe<Scalars['ID']['output']>;
-  senderRating?: Maybe<Rating>;
-  status?: Maybe<Array<Maybe<TransactionStatus>>>;
   stopoverAddresses?: Maybe<Array<Maybe<Address>>>;
   time?: Maybe<Scalars['String']['output']>;
   total?: Maybe<Scalars['Float']['output']>;
+  transactionId?: Maybe<Scalars['SqlID']['output']>;
   volume?: Maybe<Volume>;
   weight?: Maybe<Weight>;
 };
 
-export type QuotationOffer = {
-  __typename?: 'QuotationOffer';
-  carrier?: Maybe<Carrier>;
-  carrierId?: Maybe<Scalars['ID']['output']>;
-  date?: Maybe<Scalars['Date']['output']>;
-  fleetType?: Maybe<Scalars['String']['output']>;
-  isExpired?: Maybe<Scalars['Boolean']['output']>;
-  offerPrice?: Maybe<Scalars['Float']['output']>;
-  time?: Maybe<Scalars['String']['output']>;
+export type QuotationFilter = {
+  quotationId: Scalars['SqlID']['input'];
 };
 
 export type QuotationsFilter = {
-  isBooked?: InputMaybe<Scalars['Boolean']['input']>;
-  isOwned?: InputMaybe<Scalars['Boolean']['input']>;
+  carrierId?: InputMaybe<Scalars['SqlID']['input']>;
+  isDeal?: InputMaybe<Scalars['Boolean']['input']>;
   minDate?: InputMaybe<Scalars['Date']['input']>;
-  minQuotationDate?: InputMaybe<Scalars['Date']['input']>;
+  minOfferDate?: InputMaybe<Scalars['Date']['input']>;
   orderBy?: InputMaybe<Scalars['String']['input']>;
+  senderId?: InputMaybe<Scalars['SqlID']['input']>;
   sort?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -387,6 +403,7 @@ export type ResetPasswordInput = {
 export type Response = {
   __typename?: 'Response';
   data?: Maybe<Scalars['JSONObject']['output']>;
+  message?: Maybe<Scalars['String']['output']>;
   status?: Maybe<Scalars['String']['output']>;
 };
 
@@ -399,7 +416,7 @@ export type Sender = {
   email?: Maybe<Scalars['String']['output']>;
   firstname?: Maybe<Scalars['String']['output']>;
   gender?: Maybe<GenderEnum>;
-  id?: Maybe<Scalars['ID']['output']>;
+  id?: Maybe<Scalars['SqlID']['output']>;
   lastname?: Maybe<Scalars['String']['output']>;
   phone?: Maybe<Scalars['String']['output']>;
   ratingAverage?: Maybe<Scalars['Int']['output']>;
@@ -419,8 +436,9 @@ export type Session = {
   email?: Maybe<Scalars['String']['output']>;
   firstname?: Maybe<Scalars['String']['output']>;
   fleetType?: Maybe<Scalars['String']['output']>;
+  fleetVolume?: Maybe<Scalars['Float']['output']>;
   gender?: Maybe<GenderEnum>;
-  id?: Maybe<Scalars['ID']['output']>;
+  id?: Maybe<Scalars['SqlID']['output']>;
   isAdmin?: Maybe<Scalars['Boolean']['output']>;
   isVerified?: Maybe<Scalars['Boolean']['output']>;
   lastname?: Maybe<Scalars['String']['output']>;
@@ -450,20 +468,17 @@ export type SessionUrl = {
   transportLicense?: Maybe<Scalars['String']['output']>;
 };
 
-export type SetRatingInput = {
-  comment: Scalars['String']['input'];
-  id: Scalars['ID']['input'];
-  value: Scalars['Float']['input'];
-};
-
 export type SignInInput = {
   authType: Scalars['String']['input'];
+  carrier?: InputMaybe<Scalars['Boolean']['input']>;
   email: Scalars['String']['input'];
   password: Scalars['String']['input'];
+  sender?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 export type SignUpInput = {
   authType: Scalars['String']['input'];
+  carrier?: InputMaybe<Scalars['Boolean']['input']>;
   country: Scalars['String']['input'];
   email: Scalars['String']['input'];
   firstname: Scalars['String']['input'];
@@ -472,13 +487,12 @@ export type SignUpInput = {
   lastname: Scalars['String']['input'];
   password: Scalars['String']['input'];
   phone: Scalars['String']['input'];
+  sender?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 export enum StatusEnum {
   Booked = 'booked',
-  Decline = 'decline',
   Delivered = 'delivered',
-  Delivering = 'delivering',
   Ongoing = 'ongoing'
 }
 
@@ -559,21 +573,28 @@ export type Transaction = {
   __typename?: 'Transaction';
   carrier?: Maybe<Carrier>;
   carrierFee?: Maybe<Scalars['Float']['output']>;
-  carrierId?: Maybe<Scalars['ID']['output']>;
-  carrierRating?: Maybe<Rating>;
   code?: Maybe<Scalars['String']['output']>;
   date?: Maybe<Scalars['Date']['output']>;
   destinationAddress?: Maybe<Address>;
-  distance?: Maybe<Distance>;
+  distance?: Maybe<Scalars['Float']['output']>;
   fleetType?: Maybe<Scalars['String']['output']>;
+  fleetVolume?: Maybe<Scalars['Float']['output']>;
   flexible?: Maybe<Scalars['Boolean']['output']>;
-  id?: Maybe<Scalars['ID']['output']>;
+  hasQuotation?: Maybe<Scalars['Boolean']['output']>;
+  id?: Maybe<Scalars['SqlID']['output']>;
+  isCarrierRated?: Maybe<Scalars['Boolean']['output']>;
+  isDeal?: Maybe<Scalars['Boolean']['output']>;
+  isDelivered?: Maybe<Scalars['Boolean']['output']>;
+  isExpired?: Maybe<Scalars['Boolean']['output']>;
+  isPaid?: Maybe<Scalars['Boolean']['output']>;
+  isSenderRated?: Maybe<Scalars['Boolean']['output']>;
+  offerDate?: Maybe<Scalars['Date']['output']>;
+  offerTime?: Maybe<Scalars['String']['output']>;
   packages?: Maybe<Array<Maybe<Package>>>;
   pickupAddress?: Maybe<Address>;
   platformFee?: Maybe<Scalars['Float']['output']>;
+  quotationId?: Maybe<Scalars['SqlID']['output']>;
   sender?: Maybe<Sender>;
-  senderId?: Maybe<Scalars['ID']['output']>;
-  senderRating?: Maybe<Rating>;
   status?: Maybe<Array<Maybe<TransactionStatus>>>;
   stopoverAddresses?: Maybe<Array<Maybe<Address>>>;
   time?: Maybe<Scalars['String']['output']>;
@@ -583,7 +604,7 @@ export type Transaction = {
 };
 
 export type TransactionFilter = {
-  transactionId?: InputMaybe<Scalars['ID']['input']>;
+  transactionId: Scalars['SqlID']['input'];
 };
 
 export type TransactionStatus = {
@@ -593,11 +614,14 @@ export type TransactionStatus = {
 };
 
 export type TransactionsFilter = {
-  isBooked?: InputMaybe<Scalars['Boolean']['input']>;
+  carrierId?: InputMaybe<Scalars['SqlID']['input']>;
+  initBy?: InputMaybe<AuthEnum>;
   isDeal?: InputMaybe<Scalars['Boolean']['input']>;
-  isOwned?: InputMaybe<Scalars['Boolean']['input']>;
+  isDelivered?: InputMaybe<Scalars['Boolean']['input']>;
+  isRequested?: InputMaybe<Scalars['Boolean']['input']>;
   minDate?: InputMaybe<Scalars['Date']['input']>;
   orderBy?: InputMaybe<Scalars['String']['input']>;
+  senderId?: InputMaybe<Scalars['SqlID']['input']>;
   sort?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -612,6 +636,7 @@ export type UpdateProfileInput = {
   company?: InputMaybe<UpdateProfileCompanyInput>;
   firstname: Scalars['String']['input'];
   fleetType?: InputMaybe<Scalars['String']['input']>;
+  fleetVolume?: InputMaybe<Scalars['Float']['input']>;
   gender?: InputMaybe<GenderEnum>;
   lastname: Scalars['String']['input'];
   phone: Scalars['String']['input'];
@@ -623,6 +648,16 @@ export type UpdateProfileUrlInput = {
   idCard?: InputMaybe<ImageInput>;
   image?: InputMaybe<ImageInput>;
   transportLicense?: InputMaybe<ImageInput>;
+};
+
+export type UpdateRatingInput = {
+  comment: Scalars['String']['input'];
+  transactionId: Scalars['ID']['input'];
+  value: Scalars['Float']['input'];
+};
+
+export type UpdateTransactionDoneInput = {
+  transactionId: Scalars['ID']['input'];
 };
 
 export type User = Carrier | Sender;
@@ -654,7 +689,21 @@ export type SignInMutation = { __typename?: 'Mutation', signIn?: { __typename?: 
 export type SessionQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type SessionQuery = { __typename?: 'Query', session?: { __typename?: 'Session', id?: string | null, authType?: AuthEnum | null, email?: string | null, firstname?: string | null, lastname?: string | null, gender?: GenderEnum | null, country?: string | null, phone?: string | null, referenceCode?: string | null, isAdmin?: boolean | null, birthdate?: any | null, fleetType?: string | null, vat?: string | null, url?: { __typename?: 'SessionUrl', image?: string | null, idCard?: string | null, transportLicense?: string | null } | null, address?: { __typename?: 'Address', location?: string | null, coordinate?: Array<number | null> | null } | null, company?: { __typename?: 'SessionCompany', name?: string | null, address?: { __typename?: 'Address', location?: string | null, coordinate?: Array<number | null> | null } | null } | null } | null };
+export type SessionQuery = { __typename?: 'Query', session?: { __typename?: 'Session', id?: any | null, isAdmin?: boolean | null, authType?: AuthEnum | null, email?: string | null, firstname?: string | null, lastname?: string | null, gender?: GenderEnum | null, country?: string | null, phone?: string | null, referenceCode?: string | null, birthdate?: any | null, fleetType?: string | null, vat?: string | null, url?: { __typename?: 'SessionUrl', image?: string | null, idCard?: string | null, transportLicense?: string | null } | null, address?: { __typename?: 'Address', location?: string | null, coordinate?: Array<number | null> | null } | null, company?: { __typename?: 'SessionCompany', name?: string | null, address?: { __typename?: 'Address', location?: string | null, coordinate?: Array<number | null> | null } | null } | null } | null };
+
+export type CreateCarrierTransactionMutationVariables = Exact<{
+  input?: InputMaybe<CreateCarrierTransactionInput>;
+}>;
+
+
+export type CreateCarrierTransactionMutation = { __typename?: 'Mutation', createCarrierTransaction?: { __typename?: 'Response', status?: string | null } | null };
+
+export type GetCarrierAvailableLoadsQueryVariables = Exact<{
+  filter?: InputMaybe<TransactionsFilter>;
+}>;
+
+
+export type GetCarrierAvailableLoadsQuery = { __typename?: 'Query', transactions?: Array<{ __typename?: 'Transaction', id?: any | null, date?: any | null, time?: string | null, flexible?: boolean | null, pickupAddress?: { __typename?: 'Address', location?: string | null } | null, destinationAddress?: { __typename?: 'Address', location?: string | null } | null, sender?: { __typename?: 'Sender', ratingAverage?: number | null, ratings?: Array<{ __typename?: 'Rating', value?: number | null } | null> | null } | null, packages?: Array<{ __typename?: 'Package', image?: string | null } | null> | null } | null> | null };
 
 export type StripeChargetListQueryVariables = Exact<{
   filter?: InputMaybe<StripeChargeListInput>;
@@ -682,7 +731,7 @@ export type MyTransactionsQueryVariables = Exact<{
 }>;
 
 
-export type MyTransactionsQuery = { __typename?: 'Query', transactions?: Array<{ __typename?: 'Transaction', id?: string | null, code?: string | null, date?: any | null, time?: string | null, carrierId?: string | null, fleetType?: string | null, carrierFee?: number | null, platformFee?: number | null, total?: number | null, senderRating?: { __typename?: 'Rating', value?: number | null, comment?: string | null } | null, carrierRating?: { __typename?: 'Rating', value?: number | null, comment?: string | null } | null, pickupAddress?: { __typename?: 'Address', location?: string | null, coordinate?: Array<number | null> | null, duration?: number | null } | null, destinationAddress?: { __typename?: 'Address', location?: string | null, coordinate?: Array<number | null> | null, duration?: number | null } | null, stopoverAddresses?: Array<{ __typename?: 'Address', location?: string | null, coordinate?: Array<number | null> | null, duration?: number | null } | null> | null, packages?: Array<{ __typename?: 'Package', image?: string | null, category?: string | null, volumeValue?: number | null, weightValue?: number | null, comment?: string | null } | null> | null, status?: Array<{ __typename?: 'TransactionStatus', name?: StatusEnum | null } | null> | null, carrier?: { __typename?: 'Carrier', firstname?: string | null, lastname?: string | null, phone?: string | null, ratingAverage?: number | null, url?: { __typename?: 'SessionUrl', image?: string | null } | null, ratings?: Array<{ __typename?: 'Rating', value?: number | null } | null> | null } | null, sender?: { __typename?: 'Sender', firstname?: string | null, lastname?: string | null, phone?: string | null, ratingAverage?: number | null, url?: { __typename?: 'SessionUrl', image?: string | null } | null, ratings?: Array<{ __typename?: 'Rating', value?: number | null } | null> | null } | null } | null> | null };
+export type MyTransactionsQuery = { __typename?: 'Query', transactions?: Array<{ __typename?: 'Transaction', id?: any | null, code?: string | null, date?: any | null, time?: string | null, carrierFee?: number | null, fleetType?: string | null, isSenderRated?: boolean | null, isCarrierRated?: boolean | null, platformFee?: number | null, total?: number | null, pickupAddress?: { __typename?: 'Address', location?: string | null, coordinate?: Array<number | null> | null, duration?: number | null } | null, destinationAddress?: { __typename?: 'Address', location?: string | null, coordinate?: Array<number | null> | null, duration?: number | null } | null, stopoverAddresses?: Array<{ __typename?: 'Address', location?: string | null, coordinate?: Array<number | null> | null, duration?: number | null } | null> | null, packages?: Array<{ __typename?: 'Package', image?: string | null, category?: string | null, volumeValue?: number | null, weightValue?: number | null, comment?: string | null } | null> | null, status?: Array<{ __typename?: 'TransactionStatus', name?: StatusEnum | null } | null> | null, carrier?: { __typename?: 'Carrier', firstname?: string | null, lastname?: string | null, phone?: string | null, ratingAverage?: number | null, url?: { __typename?: 'SessionUrl', image?: string | null } | null, ratings?: Array<{ __typename?: 'Rating', value?: number | null } | null> | null } | null, sender?: { __typename?: 'Sender', firstname?: string | null, lastname?: string | null, phone?: string | null, ratingAverage?: number | null, url?: { __typename?: 'SessionUrl', image?: string | null } | null, ratings?: Array<{ __typename?: 'Rating', value?: number | null } | null> | null } | null } | null> | null };
 
 export type GetSenderListQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -735,6 +784,7 @@ export const SessionDocument = gql`
     query Session {
   session {
     id
+    isAdmin
     authType
     email
     firstname
@@ -743,7 +793,6 @@ export const SessionDocument = gql`
     country
     phone
     referenceCode
-    isAdmin
     url {
       image
       idCard
@@ -793,6 +842,92 @@ export function useSessionLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Se
 export type SessionQueryHookResult = ReturnType<typeof useSessionQuery>;
 export type SessionLazyQueryHookResult = ReturnType<typeof useSessionLazyQuery>;
 export type SessionQueryResult = Apollo.QueryResult<SessionQuery, SessionQueryVariables>;
+export const CreateCarrierTransactionDocument = gql`
+    mutation CreateCarrierTransaction($input: CreateCarrierTransactionInput) {
+  createCarrierTransaction(input: $input) {
+    status
+  }
+}
+    `;
+export type CreateCarrierTransactionMutationFn = Apollo.MutationFunction<CreateCarrierTransactionMutation, CreateCarrierTransactionMutationVariables>;
+
+/**
+ * __useCreateCarrierTransactionMutation__
+ *
+ * To run a mutation, you first call `useCreateCarrierTransactionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateCarrierTransactionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createCarrierTransactionMutation, { data, loading, error }] = useCreateCarrierTransactionMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateCarrierTransactionMutation(baseOptions?: Apollo.MutationHookOptions<CreateCarrierTransactionMutation, CreateCarrierTransactionMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateCarrierTransactionMutation, CreateCarrierTransactionMutationVariables>(CreateCarrierTransactionDocument, options);
+      }
+export type CreateCarrierTransactionMutationHookResult = ReturnType<typeof useCreateCarrierTransactionMutation>;
+export type CreateCarrierTransactionMutationResult = Apollo.MutationResult<CreateCarrierTransactionMutation>;
+export type CreateCarrierTransactionMutationOptions = Apollo.BaseMutationOptions<CreateCarrierTransactionMutation, CreateCarrierTransactionMutationVariables>;
+export const GetCarrierAvailableLoadsDocument = gql`
+    query GetCarrierAvailableLoads($filter: TransactionsFilter) {
+  transactions(filter: $filter) {
+    id
+    date
+    time
+    flexible
+    pickupAddress {
+      location
+    }
+    destinationAddress {
+      location
+    }
+    sender {
+      ratings {
+        value
+      }
+      ratingAverage
+    }
+    packages {
+      image
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetCarrierAvailableLoadsQuery__
+ *
+ * To run a query within a React component, call `useGetCarrierAvailableLoadsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetCarrierAvailableLoadsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetCarrierAvailableLoadsQuery({
+ *   variables: {
+ *      filter: // value for 'filter'
+ *   },
+ * });
+ */
+export function useGetCarrierAvailableLoadsQuery(baseOptions?: Apollo.QueryHookOptions<GetCarrierAvailableLoadsQuery, GetCarrierAvailableLoadsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetCarrierAvailableLoadsQuery, GetCarrierAvailableLoadsQueryVariables>(GetCarrierAvailableLoadsDocument, options);
+      }
+export function useGetCarrierAvailableLoadsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetCarrierAvailableLoadsQuery, GetCarrierAvailableLoadsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetCarrierAvailableLoadsQuery, GetCarrierAvailableLoadsQueryVariables>(GetCarrierAvailableLoadsDocument, options);
+        }
+export type GetCarrierAvailableLoadsQueryHookResult = ReturnType<typeof useGetCarrierAvailableLoadsQuery>;
+export type GetCarrierAvailableLoadsLazyQueryHookResult = ReturnType<typeof useGetCarrierAvailableLoadsLazyQuery>;
+export type GetCarrierAvailableLoadsQueryResult = Apollo.QueryResult<GetCarrierAvailableLoadsQuery, GetCarrierAvailableLoadsQueryVariables>;
 export const StripeChargetListDocument = gql`
     query StripeChargetList($filter: StripeChargeListInput) {
   stripeChargeList(filter: $filter) {
@@ -930,16 +1065,10 @@ export const MyTransactionsDocument = gql`
     code
     date
     time
-    carrierId
+    carrierFee
     fleetType
-    senderRating {
-      value
-      comment
-    }
-    carrierRating {
-      value
-      comment
-    }
+    isSenderRated
+    isCarrierRated
     pickupAddress {
       location
       coordinate
