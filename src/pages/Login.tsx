@@ -38,23 +38,26 @@ export const Login: React.FC = () => {
         console.log(res);
         if(res?.token?.session && res.isAdmin) {
           await localStorage.setItem('sessionToken', res.token.session);
-          if (res?.token?.session) {
-            getSession({
-              onCompleted: ({ session: currentSession }) => {
-                console.log(currentSession?.id);
-                console.log(currentSession?.isAdmin);
-                if(currentSession?.id && currentSession.isAdmin) {
-                  setSession(currentSession);
-                  navigate('/dashboard/home');
-                } else {
+          
+          setTimeout(() => {
+            if (res?.token?.session) {
+              getSession({
+                onCompleted: ({ session: currentSession }) => {
+                  console.log(currentSession?.id);
+                  console.log(currentSession?.isAdmin);
+                  if(currentSession?.id && currentSession.isAdmin) {
+                    setSession(currentSession);
+                    navigate('/dashboard/home');
+                  } else {
+                    navigate('auth/signin');
+                  }
+                },
+                onError: ()=> {
                   navigate('auth/signin');
                 }
-              },
-              onError: ()=> {
-                navigate('auth/signin');
-              }
-            });
-          }
+              });
+            }
+          }, 250);
         } else {
           alert('You don\'t have access');
         }
