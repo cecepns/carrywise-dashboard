@@ -39,25 +39,25 @@ export const Login: React.FC = () => {
         if(res?.token?.session && res.isAdmin) {
           await localStorage.setItem('sessionToken', res.token.session);
           
-          setTimeout(() => {
-            if (res?.token?.session) {
-              getSession({
-                onCompleted: ({ session: currentSession }) => {
-                  console.log(currentSession?.id);
-                  console.log(currentSession?.isAdmin);
-                  if(currentSession?.id && currentSession.isAdmin) {
-                    setSession(currentSession);
-                    navigate('/dashboard/home');
-                  } else {
-                    navigate('auth/signin');
-                  }
-                },
-                onError: ()=> {
+          if (res?.token?.session) {
+            getSession({
+              fetchPolicy: 'network-only',
+              onCompleted: ({ session: currentSession }) => {
+                console.log(currentSession?.id);
+                console.log(currentSession?.isAdmin);
+                if(currentSession?.id && currentSession.isAdmin) {
+                  setSession(currentSession);
+                  navigate('/dashboard/home');
+                } else {
                   navigate('auth/signin');
                 }
-              });
-            }
-          }, 250);
+              },
+              onError: (err)=> {
+                console.log('error', err);
+                navigate('auth/signin');
+              }
+            });
+          }
         } else {
           alert('You don\'t have access');
         }
