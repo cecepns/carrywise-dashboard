@@ -1,10 +1,10 @@
-import { useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { Button, Typography } from '@/components/atoms';
 import { Table } from '@/components/molecules';
 import moment from 'moment';
-import { useGetCarrierAvailableLoadsLazyQuery } from '@/generated/graphql';
+import { useDeleteTravelBoardMutation, useGetTravelBoardsLazyQuery } from '@/generated/graphql';
 
 export enum AuthEnum {
   Sender = 'sender',
@@ -15,28 +15,62 @@ export const TravelBulletin: React.FC = () => {
   const navigate = useNavigate();
 
   const [getListTrips, { data }] =
-    useGetCarrierAvailableLoadsLazyQuery();
+    useGetTravelBoardsLazyQuery();
 
-  const dataCarriers = useMemo(() => data?.transactions, [data?.transactions]);
+  const [deleteTravelBoard] = useDeleteTravelBoardMutation();
+
+  const dataCarriers = useMemo(() => data?.travelBoards, [data?.travelBoards]);
 
   useEffect(() => {
     getListTrips({
       fetchPolicy: 'cache-and-network',
       variables: {
         filter: {
-          initBy: AuthEnum.Carrier,
-          // minDate: moment().add(1, 'day').toISOString(),
-        },
-      },
+          minDate: moment().format('YYYY-MM-DD')
+        }
+      }
     });
   }, [getListTrips]);
 
-  console.log(dataCarriers);
+  const handleDelete = useCallback((id: number) => {
+    const confirm = window.confirm('Are you sure want to delete this data ?');
+
+    if(confirm) {
+      deleteTravelBoard({
+        fetchPolicy: 'network-only',
+        variables: {
+          input: {
+            transactionId: id.toString()
+          },
+        },
+        onCompleted: ({ deleteTravelBoard: res }) => {
+          if(res?.status === 'success') {
+            getListTrips({
+              fetchPolicy: 'cache-and-network',
+            });
+          }
+        },
+        onError: e => {
+          console.log(e);
+          alert(e);
+        },
+      });
+    }
+
+  }, [deleteTravelBoard, getListTrips]);
 
   const columnsCarrier = useMemo(() => [
     {
       Header: 'No',
       accessor: 'no',
+    },
+    {
+      Header: 'Name',
+      accessor: 'firstname',
+    },
+    {
+      Header: 'Space (m³)',
+      accessor: 'fleetVolume',
     },
     {
       Header: 'Departure city',
@@ -53,7 +87,14 @@ export const TravelBulletin: React.FC = () => {
         <span>{moment(cell.date).format('MM-DD-YYYY')}</span>
       ),
     },
-  ], []);
+    {
+      Header: 'Action',
+      accessor: 'action',
+      Cell: (cell: any) => (
+        <Button variant="danger" onClick={() => handleDelete(cell.id)}>Delete</Button>
+      ),
+    },
+  ], [handleDelete]);
 
   return (
     <div className="mt-12">

@@ -97,8 +97,24 @@ export type CreateSenderTransactionInput = {
   time?: InputMaybe<Scalars['String']['input']>;
 };
 
+export type CreateTravelBoardInput = {
+  date: Scalars['Date']['input'];
+  destinationAddress: AddressInput;
+  distance: Scalars['Float']['input'];
+  firstname: Scalars['String']['input'];
+  fleetVolume: Scalars['Float']['input'];
+  lastname: Scalars['String']['input'];
+  pickupAddress: AddressInput;
+  stopoverAddresses?: InputMaybe<Array<InputMaybe<AddressInput>>>;
+  time?: InputMaybe<Scalars['String']['input']>;
+};
+
 export type DeleteAccountInput = {
   reason: Scalars['String']['input'];
+};
+
+export type DeleteTravelBoardInput = {
+  transactionId: Scalars['String']['input'];
 };
 
 export type ForgotPasswordInput = {
@@ -130,7 +146,9 @@ export type Mutation = {
   createCarrierQuotation?: Maybe<Response>;
   createCarrierTransaction?: Maybe<Response>;
   createSenderTransaction?: Maybe<Response>;
+  createTravelBoard?: Maybe<Response>;
   deleteAccount?: Maybe<Response>;
+  deleteTravelBoard?: Maybe<Response>;
   forgotPassword?: Maybe<Response>;
   resetPassword?: Maybe<Response>;
   signIn?: Maybe<Session>;
@@ -166,8 +184,18 @@ export type MutationCreateSenderTransactionArgs = {
 };
 
 
+export type MutationCreateTravelBoardArgs = {
+  input?: InputMaybe<CreateTravelBoardInput>;
+};
+
+
 export type MutationDeleteAccountArgs = {
   input?: InputMaybe<DeleteAccountInput>;
+};
+
+
+export type MutationDeleteTravelBoardArgs = {
+  input?: InputMaybe<DeleteTravelBoardInput>;
 };
 
 
@@ -298,6 +326,7 @@ export type Query = {
   stripeRefundList?: Maybe<Array<Maybe<StripeRefund>>>;
   transaction?: Maybe<Transaction>;
   transactions?: Maybe<Array<Maybe<Transaction>>>;
+  travelBoards?: Maybe<Array<Maybe<TravelBoard>>>;
 };
 
 
@@ -338,6 +367,11 @@ export type QueryTransactionArgs = {
 
 export type QueryTransactionsArgs = {
   filter?: InputMaybe<TransactionsFilter>;
+};
+
+
+export type QueryTravelBoardsArgs = {
+  filter?: InputMaybe<TravelBoardFilter>;
 };
 
 export type Quotation = {
@@ -625,6 +659,24 @@ export type TransactionsFilter = {
   sort?: InputMaybe<Scalars['String']['input']>;
 };
 
+export type TravelBoard = {
+  __typename?: 'TravelBoard';
+  date?: Maybe<Scalars['Date']['output']>;
+  destinationAddress?: Maybe<Address>;
+  distance?: Maybe<Scalars['Float']['output']>;
+  firstname?: Maybe<Scalars['String']['output']>;
+  fleetVolume?: Maybe<Scalars['Float']['output']>;
+  id?: Maybe<Scalars['SqlID']['output']>;
+  lastname?: Maybe<Scalars['String']['output']>;
+  pickupAddress?: Maybe<Address>;
+  stopoverAddresses?: Maybe<Array<Maybe<Address>>>;
+  time?: Maybe<Scalars['String']['output']>;
+};
+
+export type TravelBoardFilter = {
+  minDate?: InputMaybe<Scalars['Date']['input']>;
+};
+
 export type UpdateProfileCompanyInput = {
   address?: InputMaybe<AddressInput>;
   name?: InputMaybe<Scalars['String']['input']>;
@@ -691,19 +743,26 @@ export type SessionQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type SessionQuery = { __typename?: 'Query', session?: { __typename?: 'Session', id?: any | null, isAdmin?: boolean | null, authType?: AuthEnum | null, email?: string | null, firstname?: string | null, lastname?: string | null, gender?: GenderEnum | null, country?: string | null, phone?: string | null, referenceCode?: string | null, birthdate?: any | null, fleetType?: string | null, vat?: string | null, url?: { __typename?: 'SessionUrl', image?: string | null, idCard?: string | null, transportLicense?: string | null } | null, address?: { __typename?: 'Address', location?: string | null, coordinate?: Array<number | null> | null } | null, company?: { __typename?: 'SessionCompany', name?: string | null, address?: { __typename?: 'Address', location?: string | null, coordinate?: Array<number | null> | null } | null } | null } | null };
 
-export type CreateCarrierTransactionMutationVariables = Exact<{
-  input?: InputMaybe<CreateCarrierTransactionInput>;
+export type CreateTravelBoardMutationVariables = Exact<{
+  input?: InputMaybe<CreateTravelBoardInput>;
 }>;
 
 
-export type CreateCarrierTransactionMutation = { __typename?: 'Mutation', createCarrierTransaction?: { __typename?: 'Response', status?: string | null } | null };
+export type CreateTravelBoardMutation = { __typename?: 'Mutation', createTravelBoard?: { __typename?: 'Response', status?: string | null } | null };
 
-export type GetCarrierAvailableLoadsQueryVariables = Exact<{
-  filter?: InputMaybe<TransactionsFilter>;
+export type DeleteTravelBoardMutationVariables = Exact<{
+  input?: InputMaybe<DeleteTravelBoardInput>;
 }>;
 
 
-export type GetCarrierAvailableLoadsQuery = { __typename?: 'Query', transactions?: Array<{ __typename?: 'Transaction', id?: any | null, date?: any | null, time?: string | null, flexible?: boolean | null, pickupAddress?: { __typename?: 'Address', location?: string | null } | null, destinationAddress?: { __typename?: 'Address', location?: string | null } | null, sender?: { __typename?: 'Sender', ratingAverage?: number | null, ratings?: Array<{ __typename?: 'Rating', value?: number | null } | null> | null } | null, packages?: Array<{ __typename?: 'Package', image?: string | null } | null> | null } | null> | null };
+export type DeleteTravelBoardMutation = { __typename?: 'Mutation', deleteTravelBoard?: { __typename?: 'Response', status?: string | null } | null };
+
+export type GetTravelBoardsQueryVariables = Exact<{
+  filter?: InputMaybe<TravelBoardFilter>;
+}>;
+
+
+export type GetTravelBoardsQuery = { __typename?: 'Query', travelBoards?: Array<{ __typename?: 'TravelBoard', id?: any | null, firstname?: string | null, lastname?: string | null, date?: any | null, time?: string | null, fleetVolume?: number | null, pickupAddress?: { __typename?: 'Address', location?: string | null } | null, destinationAddress?: { __typename?: 'Address', location?: string | null } | null } | null> | null };
 
 export type StripeChargetListQueryVariables = Exact<{
   filter?: InputMaybe<StripeChargeListInput>;
@@ -842,92 +901,118 @@ export function useSessionLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Se
 export type SessionQueryHookResult = ReturnType<typeof useSessionQuery>;
 export type SessionLazyQueryHookResult = ReturnType<typeof useSessionLazyQuery>;
 export type SessionQueryResult = Apollo.QueryResult<SessionQuery, SessionQueryVariables>;
-export const CreateCarrierTransactionDocument = gql`
-    mutation CreateCarrierTransaction($input: CreateCarrierTransactionInput) {
-  createCarrierTransaction(input: $input) {
+export const CreateTravelBoardDocument = gql`
+    mutation CreateTravelBoard($input: CreateTravelBoardInput) {
+  createTravelBoard(input: $input) {
     status
   }
 }
     `;
-export type CreateCarrierTransactionMutationFn = Apollo.MutationFunction<CreateCarrierTransactionMutation, CreateCarrierTransactionMutationVariables>;
+export type CreateTravelBoardMutationFn = Apollo.MutationFunction<CreateTravelBoardMutation, CreateTravelBoardMutationVariables>;
 
 /**
- * __useCreateCarrierTransactionMutation__
+ * __useCreateTravelBoardMutation__
  *
- * To run a mutation, you first call `useCreateCarrierTransactionMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateCarrierTransactionMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useCreateTravelBoardMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateTravelBoardMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [createCarrierTransactionMutation, { data, loading, error }] = useCreateCarrierTransactionMutation({
+ * const [createTravelBoardMutation, { data, loading, error }] = useCreateTravelBoardMutation({
  *   variables: {
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useCreateCarrierTransactionMutation(baseOptions?: Apollo.MutationHookOptions<CreateCarrierTransactionMutation, CreateCarrierTransactionMutationVariables>) {
+export function useCreateTravelBoardMutation(baseOptions?: Apollo.MutationHookOptions<CreateTravelBoardMutation, CreateTravelBoardMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateCarrierTransactionMutation, CreateCarrierTransactionMutationVariables>(CreateCarrierTransactionDocument, options);
+        return Apollo.useMutation<CreateTravelBoardMutation, CreateTravelBoardMutationVariables>(CreateTravelBoardDocument, options);
       }
-export type CreateCarrierTransactionMutationHookResult = ReturnType<typeof useCreateCarrierTransactionMutation>;
-export type CreateCarrierTransactionMutationResult = Apollo.MutationResult<CreateCarrierTransactionMutation>;
-export type CreateCarrierTransactionMutationOptions = Apollo.BaseMutationOptions<CreateCarrierTransactionMutation, CreateCarrierTransactionMutationVariables>;
-export const GetCarrierAvailableLoadsDocument = gql`
-    query GetCarrierAvailableLoads($filter: TransactionsFilter) {
-  transactions(filter: $filter) {
+export type CreateTravelBoardMutationHookResult = ReturnType<typeof useCreateTravelBoardMutation>;
+export type CreateTravelBoardMutationResult = Apollo.MutationResult<CreateTravelBoardMutation>;
+export type CreateTravelBoardMutationOptions = Apollo.BaseMutationOptions<CreateTravelBoardMutation, CreateTravelBoardMutationVariables>;
+export const DeleteTravelBoardDocument = gql`
+    mutation DeleteTravelBoard($input: DeleteTravelBoardInput) {
+  deleteTravelBoard(input: $input) {
+    status
+  }
+}
+    `;
+export type DeleteTravelBoardMutationFn = Apollo.MutationFunction<DeleteTravelBoardMutation, DeleteTravelBoardMutationVariables>;
+
+/**
+ * __useDeleteTravelBoardMutation__
+ *
+ * To run a mutation, you first call `useDeleteTravelBoardMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteTravelBoardMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteTravelBoardMutation, { data, loading, error }] = useDeleteTravelBoardMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useDeleteTravelBoardMutation(baseOptions?: Apollo.MutationHookOptions<DeleteTravelBoardMutation, DeleteTravelBoardMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteTravelBoardMutation, DeleteTravelBoardMutationVariables>(DeleteTravelBoardDocument, options);
+      }
+export type DeleteTravelBoardMutationHookResult = ReturnType<typeof useDeleteTravelBoardMutation>;
+export type DeleteTravelBoardMutationResult = Apollo.MutationResult<DeleteTravelBoardMutation>;
+export type DeleteTravelBoardMutationOptions = Apollo.BaseMutationOptions<DeleteTravelBoardMutation, DeleteTravelBoardMutationVariables>;
+export const GetTravelBoardsDocument = gql`
+    query GetTravelBoards($filter: TravelBoardFilter) {
+  travelBoards(filter: $filter) {
     id
+    firstname
+    lastname
     date
     time
-    flexible
+    fleetVolume
     pickupAddress {
       location
     }
     destinationAddress {
       location
     }
-    sender {
-      ratings {
-        value
-      }
-      ratingAverage
-    }
-    packages {
-      image
-    }
   }
 }
     `;
 
 /**
- * __useGetCarrierAvailableLoadsQuery__
+ * __useGetTravelBoardsQuery__
  *
- * To run a query within a React component, call `useGetCarrierAvailableLoadsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetCarrierAvailableLoadsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetTravelBoardsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetTravelBoardsQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetCarrierAvailableLoadsQuery({
+ * const { data, loading, error } = useGetTravelBoardsQuery({
  *   variables: {
  *      filter: // value for 'filter'
  *   },
  * });
  */
-export function useGetCarrierAvailableLoadsQuery(baseOptions?: Apollo.QueryHookOptions<GetCarrierAvailableLoadsQuery, GetCarrierAvailableLoadsQueryVariables>) {
+export function useGetTravelBoardsQuery(baseOptions?: Apollo.QueryHookOptions<GetTravelBoardsQuery, GetTravelBoardsQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetCarrierAvailableLoadsQuery, GetCarrierAvailableLoadsQueryVariables>(GetCarrierAvailableLoadsDocument, options);
+        return Apollo.useQuery<GetTravelBoardsQuery, GetTravelBoardsQueryVariables>(GetTravelBoardsDocument, options);
       }
-export function useGetCarrierAvailableLoadsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetCarrierAvailableLoadsQuery, GetCarrierAvailableLoadsQueryVariables>) {
+export function useGetTravelBoardsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetTravelBoardsQuery, GetTravelBoardsQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetCarrierAvailableLoadsQuery, GetCarrierAvailableLoadsQueryVariables>(GetCarrierAvailableLoadsDocument, options);
+          return Apollo.useLazyQuery<GetTravelBoardsQuery, GetTravelBoardsQueryVariables>(GetTravelBoardsDocument, options);
         }
-export type GetCarrierAvailableLoadsQueryHookResult = ReturnType<typeof useGetCarrierAvailableLoadsQuery>;
-export type GetCarrierAvailableLoadsLazyQueryHookResult = ReturnType<typeof useGetCarrierAvailableLoadsLazyQuery>;
-export type GetCarrierAvailableLoadsQueryResult = Apollo.QueryResult<GetCarrierAvailableLoadsQuery, GetCarrierAvailableLoadsQueryVariables>;
+export type GetTravelBoardsQueryHookResult = ReturnType<typeof useGetTravelBoardsQuery>;
+export type GetTravelBoardsLazyQueryHookResult = ReturnType<typeof useGetTravelBoardsLazyQuery>;
+export type GetTravelBoardsQueryResult = Apollo.QueryResult<GetTravelBoardsQuery, GetTravelBoardsQueryVariables>;
 export const StripeChargetListDocument = gql`
     query StripeChargetList($filter: StripeChargeListInput) {
   stripeChargeList(filter: $filter) {

@@ -5,7 +5,7 @@ import moment from 'moment';
 import { ENV } from '@/utils/env';
 import { Button, Icon, Typography } from '@/components/atoms';
 import { Input, RouteTimeline } from '@/components/molecules';
-import { Address, useCreateCarrierTransactionMutation } from '@/generated/graphql';
+import { Address, useCreateTravelBoardMutation } from '@/generated/graphql';
 import { AddressApi, InputSearchAddress } from '@/components/organisms';
 
 const initialStopoverValue = (): Address => ({
@@ -14,7 +14,9 @@ const initialStopoverValue = (): Address => ({
 });
 
 export const TravelBulletinCreate: React.FC = () => {
-  const [address, setAddress] = useState({
+  const [form, setForm] = useState({
+    firstname: '',
+    lastname: '',
     date: '',
     pickupAddress: { 
       location: '',
@@ -24,24 +26,24 @@ export const TravelBulletinCreate: React.FC = () => {
       location: '',
       coordinate: [0, 0],
     },
-    space: 0
+    fleetVolume: 0
   });
   const [loading, setLoading] = useState<boolean>(false);
   const [stopover, setStopover] = useState<Address[]>([]);
   const navigate = useNavigate();
   const [createCarrierTransaction, { loading: loadingCreateTrips }] =
-    useCreateCarrierTransactionMutation();
+    useCreateTravelBoardMutation();
 
   const dataAddress = useMemo(() => {
-    if(address.destinationAddress || address.pickupAddress) {
+    if(form.destinationAddress || form.pickupAddress) {
       return {
-        ...address,
+        ...form,
         stopoverAddresses: stopover
       };
     }
 
     return {};
-  }, [address, stopover]);
+  }, [form, stopover]);
 
   const handleClickStopover = useCallback(
     (index: number) => (val: AddressApi) => {
@@ -50,10 +52,10 @@ export const TravelBulletinCreate: React.FC = () => {
           if (index === i) {
             return {
               coordinate: [
-                parseFloat(val.lon.toString()) ?? 0,
-                parseFloat(val.lat.toString()) ?? 0,
+                parseFloat(val?.lon.toString() ?? 0),
+                parseFloat(val?.lat.toString() ?? 0),
               ],
-              location: val.display_name ?? ''
+              location: val?.display_name ?? ''
             };
           }
           return item;
@@ -82,26 +84,33 @@ export const TravelBulletinCreate: React.FC = () => {
 
   const handleClickAddress = useCallback(
     (name:string) => (val:AddressApi) => {
-      setAddress(prev => ({
+      setForm(prev => ({
         ...prev,
         [name]: {
           coordinate: [
-            parseFloat(val.lon.toString()) ?? 0,
-            parseFloat(val.lat.toString()) ?? 0,
+            parseFloat(val?.lon.toString() ?? 0),
+            parseFloat(val?.lat.toString() ?? 0),
           ],
-          location: val.display_name ?? ''
+          location: val?.display_name ?? ''
         }
       }));
     }, []);
 
   const inputChangeHandler = useCallback((name:string) => (val:string) => {
-    setAddress(prev => ({
-      ...prev,
-      [name]: {
+    if(name === 'pickupAddress' || name === 'destinationAddress') {
+      setForm(prev => ({
         ...prev,
-        location:val
-      }
-    }));
+        [name]: {
+          coordinate: [0, 0],
+          location: val
+        }
+      }));  
+    } else {
+      setForm(prev => ({
+        ...prev,
+        [name]: val
+      }));
+    }
   }, []);
 
   const handleAddStopover = useCallback(() => {
@@ -118,7 +127,7 @@ export const TravelBulletinCreate: React.FC = () => {
   const handleSubmit = useCallback(async () => {
     setLoading(true);
     const coordinates = [
-      address.pickupAddress?.coordinate?.join(','),
+      form.pickupAddress?.coordinate?.join(','),
       ...(stopover ?? []).map(
         (stopover: Address | null) => {
           if (stopover?.coordinate) {
@@ -127,7 +136,7 @@ export const TravelBulletinCreate: React.FC = () => {
           return '';
         },
       ),
-      address.destinationAddress?.coordinate?.join(','),
+      form.destinationAddress?.coordinate?.join(','),
     ].join(';');
 
     try {
@@ -143,16 +152,17 @@ export const TravelBulletinCreate: React.FC = () => {
           fetchPolicy: 'network-only',
           variables: {
             input: {
-              date: moment().format('YYYY-MM-DD'),
-              time: moment().format('hh:mm'),
-              flexible: false,
+              ...form,
+              date: moment(form.date).format('YYYY-MM-DD'),
+              time: moment(form.date).format('hh:mm'),
               distance: Number(bestRoute.distance) ?? 0,
-              pickupAddress: address.pickupAddress,
-              destinationAddress: address.destinationAddress,
+              fleetVolume: Number(form.fleetVolume) ?? 0,
+              pickupAddress: form.pickupAddress,
+              destinationAddress: form.destinationAddress,
               stopoverAddresses: stopover,
             },
           },
-          onCompleted: ({ createCarrierTransaction: res }) => {
+          onCompleted: ({ createTravelBoard: res }) => {
             console.log(res);
             alert('Success add trips');
             navigate('/dashboard/travel-bulletin');
@@ -171,7 +181,7 @@ export const TravelBulletinCreate: React.FC = () => {
       alert(error);
     }
     
-  }, [address.destinationAddress, address.pickupAddress, createCarrierTransaction, navigate, stopover]);
+  }, [form, stopover, createCarrierTransaction, navigate]);
 
   return (
     <div className="mt-12">
@@ -181,15 +191,26 @@ export const TravelBulletinCreate: React.FC = () => {
         </Typography>
         <div className="flex space-x-4">
           <Button className="w-[100px] bg-gray-400 hover:bg-gray-600" onClick={() => navigate('/dashboard/travel-bulletin')}> <Icon name="arrow-left"/> Back</Button>
-          <Button className="w-1/2" onClick={handleSubmit} disabled={loading || loadingCreateTrips || !address.destinationAddress.location || !address.pickupAddress.location}> <Icon name="plus-circle"/> {loading ? 'Loading...' : 'Add Trips'} </Button>
+          <Button className="w-1/2" disabled={
+            loading ||
+            loadingCreateTrips ||
+            !form.destinationAddress.location ||
+            !form.pickupAddress.location
+          }
+          onClick={handleSubmit}
+          > 
+            <Icon name="plus-circle"/> {loading ? 'Loading...' : 'Add Trips'} 
+          </Button>
         </div>
       </div>
       <div className="grid grid-cols-3 gap-4">
         <div className="space-y-8 col-span-2">
           <Input label="Departure day" type="datetime-local" onChange={inputChangeHandler('date')}/>
+          <Input label="Firstname" onChange={inputChangeHandler('firstname')}/>
+          <Input label="Lastname" onChange={inputChangeHandler('lastname')}/>
           <InputSearchAddress 
             label="Departure city"
-            value={address.pickupAddress.location}
+            value={form.pickupAddress.location}
             onChange={inputChangeHandler('pickupAddress')}
             onClickAddress={handleClickAddress('pickupAddress')}
           />
@@ -207,13 +228,13 @@ export const TravelBulletinCreate: React.FC = () => {
           <Button className="w-[130px]" variant="text" onClick={handleAddStopover}> <Icon name="plus-circle"/> Add stopover</Button>
           <InputSearchAddress 
             label="Destination"
-            value={address.destinationAddress.location}
+            value={form.destinationAddress.location}
             onChange={inputChangeHandler('destinationAddress')}
             onClickAddress={handleClickAddress('destinationAddress')}
           />
-          <Input label="Space available (m³)" type="number"/>
+          <Input label="Space available (m³)" type="number" onChange={inputChangeHandler('fleetVolume')}/>
         </div>
-        {(address.pickupAddress.location || address.destinationAddress.location) && (
+        {(form.pickupAddress.location || form.destinationAddress.location) && (
           <RouteTimeline data={dataAddress}/>
         )}
       </div>
