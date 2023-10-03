@@ -19,7 +19,7 @@ export const TravelBulletin: React.FC = () => {
 
   const [deleteTravelBoard] = useDeleteTravelBoardMutation();
 
-  const dataCarriers = useMemo(() => data?.travelBoards, [data?.travelBoards]);
+  const dataCarriers = useMemo(() => data?.transactions, [data?.transactions]);
 
   useEffect(() => {
     getListTrips({
@@ -47,6 +47,11 @@ export const TravelBulletin: React.FC = () => {
           if(res?.status === 'success') {
             getListTrips({
               fetchPolicy: 'cache-and-network',
+              variables: {
+                filter: {
+                  minDate: moment().format('YYYY-MM-DD')
+                }
+              }
             });
           }
         },

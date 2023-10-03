@@ -1,8 +1,8 @@
 import { gql } from '@apollo/client';
 
 export const GET_TRAVEL_BOARDS = gql`
-  query GetTravelBoards($filter: TravelBoardFilter) {
-    travelBoards(filter: $filter) {
+  query GetTravelBoards($filter: TransactionsFilter) {
+    transactions(filter: $filter) {
       id
       firstname
       lastname

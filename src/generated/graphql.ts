@@ -611,6 +611,7 @@ export type Transaction = {
   date?: Maybe<Scalars['Date']['output']>;
   destinationAddress?: Maybe<Address>;
   distance?: Maybe<Scalars['Float']['output']>;
+  firstname?: Maybe<Scalars['String']['output']>;
   fleetType?: Maybe<Scalars['String']['output']>;
   fleetVolume?: Maybe<Scalars['Float']['output']>;
   flexible?: Maybe<Scalars['Boolean']['output']>;
@@ -622,6 +623,7 @@ export type Transaction = {
   isExpired?: Maybe<Scalars['Boolean']['output']>;
   isPaid?: Maybe<Scalars['Boolean']['output']>;
   isSenderRated?: Maybe<Scalars['Boolean']['output']>;
+  lastname?: Maybe<Scalars['String']['output']>;
   offerDate?: Maybe<Scalars['Date']['output']>;
   offerTime?: Maybe<Scalars['String']['output']>;
   packages?: Maybe<Array<Maybe<Package>>>;
@@ -758,11 +760,11 @@ export type DeleteTravelBoardMutationVariables = Exact<{
 export type DeleteTravelBoardMutation = { __typename?: 'Mutation', deleteTravelBoard?: { __typename?: 'Response', status?: string | null } | null };
 
 export type GetTravelBoardsQueryVariables = Exact<{
-  filter?: InputMaybe<TravelBoardFilter>;
+  filter?: InputMaybe<TransactionsFilter>;
 }>;
 
 
-export type GetTravelBoardsQuery = { __typename?: 'Query', travelBoards?: Array<{ __typename?: 'TravelBoard', id?: any | null, firstname?: string | null, lastname?: string | null, date?: any | null, time?: string | null, fleetVolume?: number | null, pickupAddress?: { __typename?: 'Address', location?: string | null } | null, destinationAddress?: { __typename?: 'Address', location?: string | null } | null } | null> | null };
+export type GetTravelBoardsQuery = { __typename?: 'Query', transactions?: Array<{ __typename?: 'Transaction', id?: any | null, firstname?: string | null, lastname?: string | null, date?: any | null, time?: string | null, fleetVolume?: number | null, pickupAddress?: { __typename?: 'Address', location?: string | null } | null, destinationAddress?: { __typename?: 'Address', location?: string | null } | null } | null> | null };
 
 export type StripeChargetListQueryVariables = Exact<{
   filter?: InputMaybe<StripeChargeListInput>;
@@ -968,8 +970,8 @@ export type DeleteTravelBoardMutationHookResult = ReturnType<typeof useDeleteTra
 export type DeleteTravelBoardMutationResult = Apollo.MutationResult<DeleteTravelBoardMutation>;
 export type DeleteTravelBoardMutationOptions = Apollo.BaseMutationOptions<DeleteTravelBoardMutation, DeleteTravelBoardMutationVariables>;
 export const GetTravelBoardsDocument = gql`
-    query GetTravelBoards($filter: TravelBoardFilter) {
-  travelBoards(filter: $filter) {
+    query GetTravelBoards($filter: TransactionsFilter) {
+  transactions(filter: $filter) {
     id
     firstname
     lastname
