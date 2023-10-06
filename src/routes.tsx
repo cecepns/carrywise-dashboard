@@ -1,5 +1,5 @@
 import React from 'react';
-import { Carrier, Home, Sender, Login, PaymentCharges, Trips, TravelBulletin, TravelBulletinCreate } from '@/pages';
+import { Carrier, Home, Sender, Login, PaymentCharges, Trips, TravelBulletin, TravelBulletinCreate, Quotations } from '@/pages';
 import { Icon } from '@/components/atoms';
 
 export interface PageRoutes {
@@ -42,6 +42,12 @@ export const routes: Layout[] = [
         name: 'travel bulletin',
         path: '/travel-bulletin',
         element: <TravelBulletin />,
+      },
+      {
+        icon: <Icon type="solid" name="paper-plane" className="text-white"/>,
+        name: 'quotations',
+        path: '/quotations',
+        element: <Quotations />,
       },
       {
         path: '/travel-bulletin/add',

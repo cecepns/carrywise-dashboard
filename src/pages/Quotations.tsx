@@ -1,28 +1,39 @@
 import { useMemo } from 'react';
 import moment from 'moment';
 
+import { Transaction, useGetQuotationsQuery } from '@/generated/graphql';
 import { Icon, Typography } from '@/components/atoms';
-import { RouteTimeline, Table } from '@/components/molecules';
-import { Transaction, useMyTransactionsQuery } from '@/generated/graphql';
-import { Timeline } from '@/type';
+import { Table } from '@/components/molecules';
+import { convertEuroAmount } from '@/utils';
 
-export const Trips: React.FC = () => {
-  const { data } = useMyTransactionsQuery({
+export const Quotations: React.FC = () => {
+  const { data } = useGetQuotationsQuery({
     fetchPolicy: 'network-only',
     variables: {
       filter: {
-        isDeal: true,
+        isDeal: false,
         minDate: new Date().toDateString(),
       },
     },
   });
 
-  const dataTransactions = useMemo(() => data?.transactions ?? [], [data?.transactions]);
+  const dataTransactions = useMemo(() => data?.quotations ?? [], [data?.quotations]);
 
   const columnsCarrier = useMemo(() => [
     {
       Header: 'No',
       accessor: 'no',
+    },
+    {
+      Header: 'Transaction Code',
+      accessor: 'code',
+    },
+    {
+      Header: 'Date',
+      accessor: 'date',
+      Cell: (cell: Transaction) => (
+        <span>{moment(cell.date).format('MM-DD-YYYY')}</span>
+      ),
     },
     {
       Header: 'Sender',
@@ -32,9 +43,6 @@ export const Trips: React.FC = () => {
           <Typography>
             {cell.sender?.firstname} {cell.sender?.lastname}
           </Typography>
-          <div className="flex items-center space-x-2">
-            <Icon type="solid" size="1x" name="phone" className="mr-1" /> : <span>{cell.sender?.phone}</span>
-          </div>
         </div>
       ),
     },
@@ -53,19 +61,19 @@ export const Trips: React.FC = () => {
       ),
     },
     {
-      Header: 'Delivery',
-      accessor: 'delivery',
-      Cell: (cell: Timeline) => (
-        <div>
-          <RouteTimeline data={cell} />
+      Header: 'Offer',
+      accessor: 'carrier.firstname',
+      Cell: (cell: Transaction) => (
+        <div className="bg-green-700 rounded-md text-center py-2 text-white">
+            €{convertEuroAmount(cell?.carrierFee ?? 0)}
         </div>
       ),
     },
     {
-      Header: 'Date',
-      accessor: 'date',
+      Header: 'Offer Date',
+      accessor: 'offerDate',
       Cell: (cell: Transaction) => (
-        <span>{moment(cell.date).format('MM-DD-YYYY')}</span>
+        <span>{moment(cell.offerDate).format('MM-DD-YYYY')}</span>
       ),
     },
   ], []);
@@ -74,7 +82,7 @@ export const Trips: React.FC = () => {
     <div className="mt-12">
       <div>
         <Typography>
-          Data Trips
+          Quotations
         </Typography>
         <Table columns={columnsCarrier} data={dataTransactions}/>
       </div>

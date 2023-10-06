@@ -759,6 +759,13 @@ export type DeleteTravelBoardMutationVariables = Exact<{
 
 export type DeleteTravelBoardMutation = { __typename?: 'Mutation', deleteTravelBoard?: { __typename?: 'Response', status?: string | null } | null };
 
+export type GetQuotationsQueryVariables = Exact<{
+  filter?: InputMaybe<QuotationsFilter>;
+}>;
+
+
+export type GetQuotationsQuery = { __typename?: 'Query', quotations?: Array<{ __typename?: 'Quotation', id?: any | null, code?: string | null, date?: any | null, time?: string | null, offerDate?: any | null, offerTime?: string | null, carrierFee?: number | null, pickupAddress?: { __typename?: 'Address', location?: string | null } | null, destinationAddress?: { __typename?: 'Address', location?: string | null } | null, carrier?: { __typename?: 'Carrier', firstname?: string | null, lastname?: string | null, fleetType?: string | null, phone?: string | null, url?: { __typename?: 'SessionUrl', image?: string | null } | null } | null, sender?: { __typename?: 'Sender', firstname?: string | null, lastname?: string | null, phone?: string | null, url?: { __typename?: 'SessionUrl', image?: string | null } | null } | null } | null> | null };
+
 export type GetTravelBoardsQueryVariables = Exact<{
   filter?: InputMaybe<TransactionsFilter>;
 }>;
@@ -969,6 +976,70 @@ export function useDeleteTravelBoardMutation(baseOptions?: Apollo.MutationHookOp
 export type DeleteTravelBoardMutationHookResult = ReturnType<typeof useDeleteTravelBoardMutation>;
 export type DeleteTravelBoardMutationResult = Apollo.MutationResult<DeleteTravelBoardMutation>;
 export type DeleteTravelBoardMutationOptions = Apollo.BaseMutationOptions<DeleteTravelBoardMutation, DeleteTravelBoardMutationVariables>;
+export const GetQuotationsDocument = gql`
+    query GetQuotations($filter: QuotationsFilter) {
+  quotations(filter: $filter) {
+    id
+    code
+    date
+    time
+    offerDate
+    offerTime
+    carrierFee
+    pickupAddress {
+      location
+    }
+    destinationAddress {
+      location
+    }
+    carrier {
+      firstname
+      lastname
+      fleetType
+      phone
+      url {
+        image
+      }
+    }
+    sender {
+      firstname
+      lastname
+      phone
+      url {
+        image
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetQuotationsQuery__
+ *
+ * To run a query within a React component, call `useGetQuotationsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetQuotationsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetQuotationsQuery({
+ *   variables: {
+ *      filter: // value for 'filter'
+ *   },
+ * });
+ */
+export function useGetQuotationsQuery(baseOptions?: Apollo.QueryHookOptions<GetQuotationsQuery, GetQuotationsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetQuotationsQuery, GetQuotationsQueryVariables>(GetQuotationsDocument, options);
+      }
+export function useGetQuotationsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetQuotationsQuery, GetQuotationsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetQuotationsQuery, GetQuotationsQueryVariables>(GetQuotationsDocument, options);
+        }
+export type GetQuotationsQueryHookResult = ReturnType<typeof useGetQuotationsQuery>;
+export type GetQuotationsLazyQueryHookResult = ReturnType<typeof useGetQuotationsLazyQuery>;
+export type GetQuotationsQueryResult = Apollo.QueryResult<GetQuotationsQuery, GetQuotationsQueryVariables>;
 export const GetTravelBoardsDocument = gql`
     query GetTravelBoards($filter: TransactionsFilter) {
   transactions(filter: $filter) {
