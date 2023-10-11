@@ -4,7 +4,6 @@ import moment from 'moment';
 import { Transaction, useGetQuotationsQuery } from '@/generated/graphql';
 import { Icon, Typography } from '@/components/atoms';
 import { Table } from '@/components/molecules';
-import { convertEuroAmount } from '@/utils';
 
 export const Quotations: React.FC = () => {
   const { data } = useGetQuotationsQuery({
