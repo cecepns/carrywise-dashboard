@@ -12,7 +12,7 @@ export const Quotations: React.FC = () => {
     variables: {
       filter: {
         isDeal: false,
-        minDate: new Date().toDateString(),
+        // minDate: new Date().toDateString(),
       },
     },
   });
@@ -25,15 +25,22 @@ export const Quotations: React.FC = () => {
       accessor: 'no',
     },
     {
-      Header: 'Transaction Code',
-      accessor: 'code',
-    },
-    {
       Header: 'Date',
       accessor: 'date',
       Cell: (cell: Transaction) => (
         <span>{moment(cell.date).format('MM-DD-YYYY')}</span>
       ),
+    },
+    {
+      Header: 'Offer Date',
+      accessor: 'offerDate',
+      Cell: (cell: Transaction) => (
+        <span>{moment(cell.offerDate).format('MM-DD-YYYY')}</span>
+      ),
+    },
+    {
+      Header: 'Code',
+      accessor: 'code',
     },
     {
       Header: 'Sender',
@@ -64,16 +71,9 @@ export const Quotations: React.FC = () => {
       Header: 'Offer',
       accessor: 'carrier.firstname',
       Cell: (cell: Transaction) => (
-        <div className="bg-green-700 rounded-md text-center py-2 text-white">
-            €{convertEuroAmount(cell?.carrierFee ?? 0)}
+        <div className="bg-green-500 font-bold rounded-md text-center py-2 text-white">
+            €{cell?.carrierFee ?? 0}
         </div>
-      ),
-    },
-    {
-      Header: 'Offer Date',
-      accessor: 'offerDate',
-      Cell: (cell: Transaction) => (
-        <span>{moment(cell.offerDate).format('MM-DD-YYYY')}</span>
       ),
     },
   ], []);

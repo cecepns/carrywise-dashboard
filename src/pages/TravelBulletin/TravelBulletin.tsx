@@ -5,11 +5,7 @@ import { Button, Typography } from '@/components/atoms';
 import { Table } from '@/components/molecules';
 import moment from 'moment';
 import { useDeleteTravelBoardMutation, useGetTravelBoardsLazyQuery } from '@/generated/graphql';
-
-export enum AuthEnum {
-  Sender = 'sender',
-  Carrier = 'carrier',
-}
+import { AuthEnum } from '@/type';
 
 export const TravelBulletin: React.FC = () => {
   const navigate = useNavigate();
@@ -26,7 +22,8 @@ export const TravelBulletin: React.FC = () => {
       fetchPolicy: 'cache-and-network',
       variables: {
         filter: {
-          minDate: moment().format('YYYY-MM-DD')
+          // minDate: moment().format('YYYY-MM-DD'),
+          initBy: AuthEnum.Carrier,
         }
       }
     });
@@ -70,22 +67,6 @@ export const TravelBulletin: React.FC = () => {
       accessor: 'no',
     },
     {
-      Header: 'Name',
-      accessor: 'firstname',
-    },
-    {
-      Header: 'Space (m³)',
-      accessor: 'fleetVolume',
-    },
-    {
-      Header: 'Departure city',
-      accessor: 'pickupAddress.location',
-    },
-    {
-      Header: 'Destination city',
-      accessor: 'destinationAddress.location',
-    },
-    {
       Header: 'Date',
       accessor: 'date',
       Cell: (cell: { date: moment.MomentInput; }) => (
@@ -93,10 +74,32 @@ export const TravelBulletin: React.FC = () => {
       ),
     },
     {
+      Header: 'Carrier Name',
+      accessor: 'firstname',
+      Cell: (cell: any) => (
+        <span>{cell.firstname || cell.carrier.firstname}</span>
+      ),
+    },
+    {
+      Header: 'Departure',
+      accessor: 'pickupAddress.location',
+    },
+    {
+      Header: 'Destination',
+      accessor: 'destinationAddress.location',
+    },
+    {
+      Header: 'Space (m³)',
+      accessor: 'fleetVolume',
+    },
+    {
       Header: 'Action',
       accessor: 'action',
       Cell: (cell: any) => (
-        <Button variant="danger" onClick={() => handleDelete(cell.id)}>Delete</Button>
+        <div className="flex space-x-3">
+          <Button variant="success">Edit</Button>
+          <Button variant="danger" onClick={() => handleDelete(cell.id)}>Delete</Button>
+        </div>
       ),
     },
   ], [handleDelete]);
@@ -105,7 +108,7 @@ export const TravelBulletin: React.FC = () => {
     <div className="mt-12">
       <div className="flex justify-between">
         <Typography>
-          Travel Bulletin
+          Available Trips
         </Typography>
         <Button className="w-[110px]" onClick={() => navigate('/dashboard/travel-bulletin/add')}>Add</Button>
       </div>

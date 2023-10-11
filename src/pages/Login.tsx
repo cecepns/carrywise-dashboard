@@ -1,15 +1,15 @@
 import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { Button, Typography } from '@/components/atoms';
-import { Checkbox, Input } from '@/components/molecules';
+import { Button } from '@/components/atoms';
+import { Input } from '@/components/molecules';
 import { useSession } from '@/hooks';
 import { useSessionLazyQuery, useSignInMutation } from '@/generated/graphql';
 
 const initialFormValues = {
   email: '',
   password: '',
-  authType: false,
+  authType: 'carrier',
 };
 
 export const Login: React.FC = () => {
@@ -20,7 +20,7 @@ export const Login: React.FC = () => {
   const [getSession] = useSessionLazyQuery();
 
   const inputChangeHandler = useCallback(
-    (name: string) => (value: string | boolean) => {
+    (name: string) => (value: string) => {
       setForm(old => ({ ...old, [name]: value }));
     },
     [],
@@ -30,8 +30,7 @@ export const Login: React.FC = () => {
     signIn({
       variables: {
         input: {
-          ...form,
-          authType: form.authType ? 'sender' : 'carrier'
+          ...form
         }
       },
       onCompleted: async ({ signIn: res }) => {
@@ -76,11 +75,11 @@ export const Login: React.FC = () => {
         </h3>
       </div>
       <div className="p-6 flex flex-col gap-4">
-        <div className="relative w-[200px] h-11 grid grid-cols-3 items-center justify-center">
+        {/* <div className="relative w-[200px] h-11 grid grid-cols-3 items-center justify-center">
           <Typography className="text-center"> Carrier </Typography>
           <Checkbox wrapperClassName="m-auto" label="block email" value={form.authType} onChange={inputChangeHandler('authType')} />
           <Typography className="text-center"> Sender </Typography>
-        </div>
+        </div> */}
 
         <div className="relative w-full min-w-[200px] h-11">
           <Input label="Email" className="h-11" onChange={inputChangeHandler('email')} />

@@ -40,6 +40,7 @@ export type ApproveSenderOrderInput = {
   carrierId: Scalars['SqlID']['input'];
   isSendInvoice?: InputMaybe<Scalars['Boolean']['input']>;
   payment?: InputMaybe<Scalars['JSONObject']['input']>;
+  paymentId?: InputMaybe<Scalars['String']['input']>;
   promoCode?: InputMaybe<Scalars['String']['input']>;
   quotationId: Scalars['SqlID']['input'];
 };
@@ -565,6 +566,7 @@ export type StripeCharge = {
 
 export type StripeChargeListInput = {
   limit?: InputMaybe<Scalars['Int']['input']>;
+  paymentId?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type StripePayment = {
@@ -627,8 +629,11 @@ export type Transaction = {
   offerDate?: Maybe<Scalars['Date']['output']>;
   offerTime?: Maybe<Scalars['String']['output']>;
   packages?: Maybe<Array<Maybe<Package>>>;
+  paymentId?: Maybe<Scalars['String']['output']>;
   pickupAddress?: Maybe<Address>;
   platformFee?: Maybe<Scalars['Float']['output']>;
+  platformOriginFee?: Maybe<Scalars['Float']['output']>;
+  promo?: Maybe<Promo>;
   quotationId?: Maybe<Scalars['SqlID']['output']>;
   sender?: Maybe<Sender>;
   status?: Maybe<Array<Maybe<TransactionStatus>>>;
@@ -771,7 +776,7 @@ export type GetTravelBoardsQueryVariables = Exact<{
 }>;
 
 
-export type GetTravelBoardsQuery = { __typename?: 'Query', transactions?: Array<{ __typename?: 'Transaction', id?: any | null, firstname?: string | null, lastname?: string | null, date?: any | null, time?: string | null, fleetVolume?: number | null, pickupAddress?: { __typename?: 'Address', location?: string | null } | null, destinationAddress?: { __typename?: 'Address', location?: string | null } | null } | null> | null };
+export type GetTravelBoardsQuery = { __typename?: 'Query', transactions?: Array<{ __typename?: 'Transaction', id?: any | null, firstname?: string | null, lastname?: string | null, date?: any | null, time?: string | null, fleetVolume?: number | null, pickupAddress?: { __typename?: 'Address', location?: string | null } | null, destinationAddress?: { __typename?: 'Address', location?: string | null } | null, carrier?: { __typename?: 'Carrier', firstname?: string | null, lastname?: string | null, phone?: string | null, ratingAverage?: number | null, url?: { __typename?: 'SessionUrl', image?: string | null } | null, ratings?: Array<{ __typename?: 'Rating', value?: number | null } | null> | null } | null, sender?: { __typename?: 'Sender', firstname?: string | null, lastname?: string | null, phone?: string | null, ratingAverage?: number | null, url?: { __typename?: 'SessionUrl', image?: string | null } | null, ratings?: Array<{ __typename?: 'Rating', value?: number | null } | null> | null } | null } | null> | null };
 
 export type StripeChargetListQueryVariables = Exact<{
   filter?: InputMaybe<StripeChargeListInput>;
@@ -799,7 +804,7 @@ export type MyTransactionsQueryVariables = Exact<{
 }>;
 
 
-export type MyTransactionsQuery = { __typename?: 'Query', transactions?: Array<{ __typename?: 'Transaction', id?: any | null, code?: string | null, date?: any | null, time?: string | null, carrierFee?: number | null, fleetType?: string | null, isSenderRated?: boolean | null, isCarrierRated?: boolean | null, platformFee?: number | null, total?: number | null, pickupAddress?: { __typename?: 'Address', location?: string | null, coordinate?: Array<number | null> | null, duration?: number | null } | null, destinationAddress?: { __typename?: 'Address', location?: string | null, coordinate?: Array<number | null> | null, duration?: number | null } | null, stopoverAddresses?: Array<{ __typename?: 'Address', location?: string | null, coordinate?: Array<number | null> | null, duration?: number | null } | null> | null, packages?: Array<{ __typename?: 'Package', image?: string | null, category?: string | null, volumeValue?: number | null, weightValue?: number | null, comment?: string | null } | null> | null, status?: Array<{ __typename?: 'TransactionStatus', name?: StatusEnum | null } | null> | null, carrier?: { __typename?: 'Carrier', firstname?: string | null, lastname?: string | null, phone?: string | null, ratingAverage?: number | null, url?: { __typename?: 'SessionUrl', image?: string | null } | null, ratings?: Array<{ __typename?: 'Rating', value?: number | null } | null> | null } | null, sender?: { __typename?: 'Sender', firstname?: string | null, lastname?: string | null, phone?: string | null, ratingAverage?: number | null, url?: { __typename?: 'SessionUrl', image?: string | null } | null, ratings?: Array<{ __typename?: 'Rating', value?: number | null } | null> | null } | null } | null> | null };
+export type MyTransactionsQuery = { __typename?: 'Query', transactions?: Array<{ __typename?: 'Transaction', id?: any | null, code?: string | null, date?: any | null, time?: string | null, carrierFee?: number | null, fleetType?: string | null, paymentId?: string | null, platformOriginFee?: number | null, isSenderRated?: boolean | null, isCarrierRated?: boolean | null, platformFee?: number | null, total?: number | null, pickupAddress?: { __typename?: 'Address', location?: string | null, coordinate?: Array<number | null> | null, duration?: number | null } | null, destinationAddress?: { __typename?: 'Address', location?: string | null, coordinate?: Array<number | null> | null, duration?: number | null } | null, stopoverAddresses?: Array<{ __typename?: 'Address', location?: string | null, coordinate?: Array<number | null> | null, duration?: number | null } | null> | null, packages?: Array<{ __typename?: 'Package', image?: string | null, category?: string | null, volumeValue?: number | null, weightValue?: number | null, comment?: string | null } | null> | null, status?: Array<{ __typename?: 'TransactionStatus', name?: StatusEnum | null } | null> | null, carrier?: { __typename?: 'Carrier', firstname?: string | null, lastname?: string | null, phone?: string | null, ratingAverage?: number | null, url?: { __typename?: 'SessionUrl', image?: string | null } | null, ratings?: Array<{ __typename?: 'Rating', value?: number | null } | null> | null } | null, sender?: { __typename?: 'Sender', firstname?: string | null, lastname?: string | null, phone?: string | null, ratingAverage?: number | null, url?: { __typename?: 'SessionUrl', image?: string | null } | null, ratings?: Array<{ __typename?: 'Rating', value?: number | null } | null> | null } | null, promo?: { __typename?: 'Promo', code?: string | null } | null } | null> | null };
 
 export type GetSenderListQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1055,6 +1060,30 @@ export const GetTravelBoardsDocument = gql`
     destinationAddress {
       location
     }
+    carrier {
+      firstname
+      lastname
+      phone
+      url {
+        image
+      }
+      ratings {
+        value
+      }
+      ratingAverage
+    }
+    sender {
+      firstname
+      lastname
+      phone
+      url {
+        image
+      }
+      ratings {
+        value
+      }
+      ratingAverage
+    }
   }
 }
     `;
@@ -1225,6 +1254,8 @@ export const MyTransactionsDocument = gql`
     time
     carrierFee
     fleetType
+    paymentId
+    platformOriginFee
     isSenderRated
     isCarrierRated
     pickupAddress {
@@ -1275,6 +1306,9 @@ export const MyTransactionsDocument = gql`
         value
       }
       ratingAverage
+    }
+    promo {
+      code
     }
     carrierFee
     platformFee

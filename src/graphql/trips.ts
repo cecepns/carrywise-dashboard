@@ -9,6 +9,8 @@ export const GET_TRANSACTIONS = gql`
       time
       carrierFee
       fleetType
+      paymentId
+      platformOriginFee
       isSenderRated
       isCarrierRated
       pickupAddress {
@@ -59,6 +61,9 @@ export const GET_TRANSACTIONS = gql`
           value
         }
         ratingAverage
+      }
+      promo {
+        code
       }
       carrierFee
       platformFee

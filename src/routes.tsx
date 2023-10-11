@@ -1,5 +1,5 @@
 import React from 'react';
-import { Carrier, Home, Sender, Login, PaymentCharges, Trips, TravelBulletin, TravelBulletinCreate, Quotations } from '@/pages';
+import { Carrier, Home, Sender, Login, TravelBulletin, TravelBulletinCreate, Quotations, AvailableLoads, Payments } from '@/pages';
 import { Icon } from '@/components/atoms';
 
 export interface PageRoutes {
@@ -38,10 +38,16 @@ export const routes: Layout[] = [
         element: <Carrier />,
       },
       {
-        icon: <Icon type="solid" name="location-plus" className="text-white"/>,
-        name: 'travel bulletin',
-        path: '/travel-bulletin',
+        icon: <Icon type="solid" name="map-marked" className="text-white"/>,
+        name: 'Available Trips',
+        path: '/available-trips',
         element: <TravelBulletin />,
+      },
+      {
+        icon: <Icon type="solid" name="map-marked" className="text-white"/>,
+        name: 'Available Loads',
+        path: '/available-loads',
+        element: <AvailableLoads />,
       },
       {
         icon: <Icon type="solid" name="paper-plane" className="text-white"/>,
@@ -57,14 +63,15 @@ export const routes: Layout[] = [
         icon: <Icon type="solid" name="cards-blank" className="text-white"/>,
         name: 'payments',
         path: '/payment',
-        element: <PaymentCharges />,
+        element: <Payments />,
       },
-      {
-        icon: <Icon type="solid" name="map-marked" className="text-white"/>,
-        name: 'trips',
-        path: '/trips',
-        element: <Trips />,
-      },
+      
+      // {
+      //   icon: <Icon type="solid" name="map-marked" className="text-white"/>,
+      //   name: 'trips',
+      //   path: '/trips',
+      //   element: <Trips />,
+      // },
     ],
   },
   {

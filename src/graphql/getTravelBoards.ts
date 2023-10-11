@@ -15,6 +15,30 @@ export const GET_TRAVEL_BOARDS = gql`
       destinationAddress {
         location
       }
+      carrier {
+        firstname
+        lastname
+        phone
+        url {
+          image
+        }
+        ratings {
+          value
+        }
+        ratingAverage
+      }
+      sender {
+        firstname
+        lastname
+        phone
+        url {
+          image
+        }
+        ratings {
+          value
+        }
+        ratingAverage
+      }
     }
   }
 `;
