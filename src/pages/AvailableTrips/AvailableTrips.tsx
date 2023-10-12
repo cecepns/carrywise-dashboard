@@ -7,7 +7,7 @@ import moment from 'moment';
 import { Transaction, useDeleteTravelBoardMutation, useGetTravelBoardsLazyQuery } from '@/generated/graphql';
 import { AuthEnum } from '@/type';
 
-export const TravelBulletin: React.FC = () => {
+export const AvailableTrips: React.FC = () => {
   const navigate = useNavigate();
 
   const [getListTrips, { data }] =

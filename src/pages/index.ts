@@ -5,6 +5,6 @@ export * from './Sender';
 export * from './Login';
 export * from './PaymentCharges';
 export * from './Payments';
-export * from './TravelBulletin';
+export * from './AvailableTrips';
 export * from './Trips';
 export * from './Quotations';

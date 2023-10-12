@@ -13,7 +13,7 @@ const initialStopoverValue = (): Address => ({
   coordinate: [],
 });
 
-export const TravelBulletinCreate: React.FC = () => {
+export const AvailableTripsCreate: React.FC = () => {
   const [form, setForm] = useState({
     firstname: '',
     lastname: '',

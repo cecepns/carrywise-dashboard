@@ -1,7 +1,16 @@
 import React from 'react';
-import { Carrier, Home, Sender, Login, TravelBulletin, TravelBulletinCreate, Quotations, AvailableLoads, Payments } from '@/pages';
+import {
+  Carrier,
+  Home,
+  Sender,
+  Login,
+  AvailableTripsCreate,
+  Quotations,
+  AvailableLoads,
+  AvailableTrips,
+  Payments
+} from '@/pages';
 import { Icon } from '@/components/atoms';
-
 export interface PageRoutes {
   icon?: React.ReactNode;
   name?: string;
@@ -41,7 +50,7 @@ export const routes: Layout[] = [
         icon: <Icon type="solid" name="map-marked" className="text-white"/>,
         name: 'Available Trips',
         path: '/available-trips',
-        element: <TravelBulletin />,
+        element: <AvailableTrips />,
       },
       {
         icon: <Icon type="solid" name="map-marked" className="text-white"/>,
@@ -57,7 +66,7 @@ export const routes: Layout[] = [
       },
       {
         path: '/available-trips/add',
-        element: <TravelBulletinCreate />,
+        element: <AvailableTripsCreate />,
       },
       {
         icon: <Icon type="solid" name="cards-blank" className="text-white"/>,
@@ -65,13 +74,6 @@ export const routes: Layout[] = [
         path: '/payment',
         element: <Payments />,
       },
-      
-      // {
-      //   icon: <Icon type="solid" name="map-marked" className="text-white"/>,
-      //   name: 'trips',
-      //   path: '/trips',
-      //   element: <Trips />,
-      // },
     ],
   },
   {
