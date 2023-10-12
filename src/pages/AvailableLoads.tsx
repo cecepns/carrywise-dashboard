@@ -4,7 +4,7 @@ import { useEffect, useMemo } from 'react';
 import { Typography } from '@/components/atoms';
 import { Table } from '@/components/molecules';
 import moment from 'moment';
-import { useGetTravelBoardsLazyQuery } from '@/generated/graphql';
+import { Transaction, useGetTravelBoardsLazyQuery } from '@/generated/graphql';
 import { AuthEnum } from '@/type';
 
 export const AvailableLoads: React.FC = () => {
@@ -78,15 +78,15 @@ export const AvailableLoads: React.FC = () => {
     {
       Header: 'Sender Name',
       accessor: 'firstname',
-      Cell: (cell: any) => (
-        <span>{cell.firstname || cell.sender.firstname}</span>
+      Cell: (cell: Transaction) => (
+        <span>{cell.firstname || cell.sender?.firstname}</span>
       ),
     },
     {
       Header: 'Carrier Name',
       accessor: 'firstname',
-      Cell: (cell: any) => (
-        <span>{cell.firstname || cell.carrier.firstname || '-'}</span>
+      Cell: (cell: Transaction) => (
+        <span>{cell.firstname || cell.carrier?.firstname || '-'}</span>
       ),
     },
     {
@@ -100,7 +100,7 @@ export const AvailableLoads: React.FC = () => {
     // {
     //   Header: 'Action',
     //   accessor: 'action',
-    //   Cell: (cell: any) => (
+    //   Cell: (cell: Transaction) => (
     //     <div className="flex space-x-3">
     //       <Button variant="success">Edit</Button>
     //       <Button variant="danger">Delete</Button>

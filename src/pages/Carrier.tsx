@@ -8,8 +8,6 @@ export const Carrier: React.FC = () => {
 
   const dataCarriers = useMemo(() => data?.carrierList, [data]);
 
-  console.log(dataCarriers);
-
   const columnsCarrier = useMemo(() => [
     {
       Header: 'No',
