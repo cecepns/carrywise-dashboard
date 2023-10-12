@@ -56,7 +56,7 @@ export const routes: Layout[] = [
         element: <Quotations />,
       },
       {
-        path: '/travel-bulletin/add',
+        path: '/available-trips/add',
         element: <TravelBulletinCreate />,
       },
       {

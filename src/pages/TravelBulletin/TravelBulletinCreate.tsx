@@ -165,7 +165,7 @@ export const TravelBulletinCreate: React.FC = () => {
           onCompleted: ({ createTravelBoard: res }) => {
             console.log(res);
             alert('Success add trips');
-            navigate('/dashboard/travel-bulletin');
+            navigate('/dashboard/available-trips');
           },
           onError: e => {
             console.log(e);
@@ -187,7 +187,7 @@ export const TravelBulletinCreate: React.FC = () => {
     <div className="mt-12">
       <div className="flex justify-between mb-8">
         <Typography>
-          Travel Bulletin
+          Add Trips
         </Typography>
         <div className="flex space-x-4">
           <Button className="w-[100px] bg-gray-400 hover:bg-gray-600" onClick={() => navigate('/dashboard/travel-bulletin')}> <Icon name="arrow-left"/> Back</Button>

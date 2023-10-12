@@ -110,7 +110,7 @@ export const TravelBulletin: React.FC = () => {
         <Typography>
           Available Trips
         </Typography>
-        <Button className="w-[110px]" onClick={() => navigate('/dashboard/travel-bulletin/add')}>Add</Button>
+        <Button className="w-[110px]" onClick={() => navigate('/dashboard/available-trips/add')}>Add</Button>
       </div>
       <Table columns={columnsCarrier} data={dataCarriers}/>
     </div> 
