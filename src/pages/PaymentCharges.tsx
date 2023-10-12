@@ -32,7 +32,6 @@ export const PaymentCharges: React.FC = () => {
 
   const handleRefund = useCallback((chargeId:string) => {
     const promp = confirm('are you sure you want to refund?');
-    console.log(promp);
 
     if(promp) {
       refundMutation({

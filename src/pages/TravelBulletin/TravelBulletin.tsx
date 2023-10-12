@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button, Typography } from '@/components/atoms';
 import { Table } from '@/components/molecules';
 import moment from 'moment';
-import { useDeleteTravelBoardMutation, useGetTravelBoardsLazyQuery } from '@/generated/graphql';
+import { Transaction, useDeleteTravelBoardMutation, useGetTravelBoardsLazyQuery } from '@/generated/graphql';
 import { AuthEnum } from '@/type';
 
 export const TravelBulletin: React.FC = () => {
@@ -22,7 +22,6 @@ export const TravelBulletin: React.FC = () => {
       fetchPolicy: 'cache-and-network',
       variables: {
         filter: {
-          // minDate: moment().format('YYYY-MM-DD'),
           initBy: AuthEnum.Carrier,
         }
       }
@@ -46,7 +45,7 @@ export const TravelBulletin: React.FC = () => {
               fetchPolicy: 'cache-and-network',
               variables: {
                 filter: {
-                  minDate: moment().format('YYYY-MM-DD')
+                  initBy: AuthEnum.Carrier,
                 }
               }
             });
@@ -76,8 +75,8 @@ export const TravelBulletin: React.FC = () => {
     {
       Header: 'Carrier Name',
       accessor: 'firstname',
-      Cell: (cell: any) => (
-        <span>{cell.firstname || cell.carrier.firstname}</span>
+      Cell: (cell: Transaction) => (
+        <span>{cell.firstname || cell.carrier?.firstname}</span>
       ),
     },
     {
@@ -95,7 +94,7 @@ export const TravelBulletin: React.FC = () => {
     {
       Header: 'Action',
       accessor: 'action',
-      Cell: (cell: any) => (
+      Cell: (cell: Transaction) => (
         <div className="flex space-x-3">
           <Button variant="success">Edit</Button>
           <Button variant="danger" onClick={() => handleDelete(cell.id)}>Delete</Button>
