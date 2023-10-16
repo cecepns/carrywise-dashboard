@@ -17,7 +17,7 @@ export const AvailableTripsCreate: React.FC = () => {
   const [form, setForm] = useState({
     firstname: '',
     lastname: '',
-    date: new Date(),
+    date: '',
     pickupAddress: { 
       location: '',
       coordinate: [0, 0],

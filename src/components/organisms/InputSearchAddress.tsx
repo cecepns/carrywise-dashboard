@@ -1,6 +1,8 @@
-import { memo, useCallback, useEffect, useRef, useState } from 'react';
+import { ChangeEvent, memo, useCallback, useEffect, useRef, useState } from 'react';
 import { Input } from '@/components/molecules';
 import { debounce } from 'lodash';
+import classNames from 'classnames';
+import { Icon } from '../atoms';
 
 export type AddressApi = {
   osm_id: number;
@@ -16,7 +18,7 @@ interface InputSearchAddressProps {
   onChange?: (value: string) => void;
   icon?: React.ReactNode;
 }
-  
+
 export const InputSearchAddress: React.FC<InputSearchAddressProps> = memo(({
   value,
   label,
@@ -24,10 +26,12 @@ export const InputSearchAddress: React.FC<InputSearchAddressProps> = memo(({
   onClickAddress,
 }) => {
   const [search, setSearch] = useState<string>('');
-  const [showList, setShowList] = useState<boolean>(true);
+  const [showList, setShowList] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const [foundAddresses, setFoundAddresses] = useState<AddressApi[]>([]);
 
   const selectRef = useRef<HTMLDivElement | null>(null);
+  const searchRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -60,6 +64,7 @@ export const InputSearchAddress: React.FC<InputSearchAddressProps> = memo(({
 
   const searchHandler = useCallback(
     async (directSearch?: string) => {
+      setLoading(true);
       try {
         if (directSearch || search.length > 2) {
           setShowList(true);
@@ -69,16 +74,18 @@ export const InputSearchAddress: React.FC<InputSearchAddressProps> = memo(({
           );
           const result = await raw.json();
           setFoundAddresses(result);
+          setLoading(false);
           if(onClickAddress) {
             onClickAddress(result[0]);
           }
         }
       } catch (err) {
         // eslint-disable-next-line no-console
+        setLoading(false);
         console.log('[SearchLocationScreen > searchHandler]', err);
       }
     },
-    [onClickAddress, search],
+    [onClickAddress, search, setLoading],
   );
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -88,24 +95,59 @@ export const InputSearchAddress: React.FC<InputSearchAddressProps> = memo(({
   );
 
   const fetchResults = useCallback((val:string) => {
-    handleChange(val);
+    // handleChange(val);
     setSearch(val);
     searchAddressFn(val);
   }, [handleChange, searchAddressFn]);
 
+  const onFocus = useCallback(() => {
+    setShowList(true);
+    setTimeout(() => {
+      if (searchRef && searchRef?.current) {
+        setSearch('');
+        searchRef?.current?.focus();
+      }
+    });
+  }, []);
+
+  const listClass = useCallback((item?: AddressApi) => classNames('w-full text-left py-2 px-4 border-b border-blue-gray-50 cusor-pointer', {
+    'bg-blue-500 text-white': value === item?.display_name,
+    'cursor-pointer text-gray-700 hover:text-black hover:bg-blue-100': value !== item?.display_name,
+    'text-sm': !item
+  }), [value]);
+
   return (
     <div className="relative w-full">
-      <Input label={label} value={value} onChange={fetchResults} />
-      {foundAddresses.length > 0 && search.length > 2 && showList && (
-        <div className="absolute bg-white z-10 min-h-[50px] max-h-[200px] overflow-y-auto border" ref={selectRef}>
-          {foundAddresses.map((item, idx) => (
-            <div key={idx} className="py-3 px-5 border-b border-blue-gray-50 cusor-pointer" onClick={()=> handleClickAddress(item)}>
-              {item.display_name}
-            </div>
-          ))}
+      <Input onFocus={onFocus} label={label} value={value} readOnly />
+      {showList && (
+        <div className="absolute w-full bg-gray-100 shadow-lg z-10 border border-gray-400">
+          <div className="border-b border-gray-500 p-2">
+            <input
+              ref={searchRef}
+              onChange={(e: ChangeEvent<HTMLInputElement>) => fetchResults(e.target.value)}
+              value={search}
+              placeholder="Search..."
+              className="w-full outline-none text-sm border border-gray-400 rounded px-2 leading-8 focus:border-blue-500"
+            />
+          </div>
+          <div className="z-10 min-h-[50px] max-h-[200px] pt-1 overflow-y-auto" ref={selectRef}>
+            {!loading ? foundAddresses.length > 0 ? foundAddresses.map((item, idx) => (
+              <div key={idx} className={listClass(item)} onClick={()=> handleClickAddress(item)}>
+                {item.display_name}
+              </div>
+            )) : (
+              <div className={listClass()}>
+                No list.
+              </div>
+            ) : (
+              <div className="w-full h-10 pt-2 flex justify-center items-center">
+                <Icon name="spinner-third" className="fa-spin" />
+              </div>
+            )}
+          </div>
         </div>
       )}
     </div>
   );
 });
-  
+

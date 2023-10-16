@@ -9,6 +9,8 @@ interface InputProps {
   className?: string;
   type?: string;
   icon?: React.ReactNode;
+  readOnly?: boolean;
+  onFocus?: () => void;
 }
 
 export const Input: React.FC<InputProps> = memo(({
@@ -18,7 +20,8 @@ export const Input: React.FC<InputProps> = memo(({
   icon,
   className,
   type = 'text',
-  inputClassName
+  inputClassName,
+  ...props
 }) => {
 
   const handleInputChange = useCallback(
@@ -49,7 +52,7 @@ export const Input: React.FC<InputProps> = memo(({
         type={type}
         value={value}
         onChange={handleInputChange}
-        placeholder=" "
+        {...props}
       />
       <label className={labelClass} htmlFor={label}>
         {label}
