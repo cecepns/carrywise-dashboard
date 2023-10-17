@@ -15,7 +15,7 @@ export const AvailableTrips: React.FC = () => {
 
   const [deleteTravelBoard] = useDeleteTravelBoardMutation();
 
-  const dataCarriers = useMemo(() => data?.transactions, [data?.transactions]);
+  const dataTrips = useMemo(() => data?.transactions, [data?.transactions]);
 
   useEffect(() => {
     getListTrips({
@@ -111,7 +111,7 @@ export const AvailableTrips: React.FC = () => {
         </Typography>
         <Button className="w-[110px]" onClick={() => navigate('/dashboard/available-trips/add')}>Add</Button>
       </div>
-      <Table columns={columnsCarrier} data={dataCarriers}/>
+      <Table columns={columnsCarrier} data={dataTrips}/>
     </div> 
   );
 };
