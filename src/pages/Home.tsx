@@ -34,6 +34,7 @@ export const Home: React.FC = () => {
     variables: {
       filter: {
         isDeal: false,
+        minDate: moment().format('YYYY-MM-DD'),
         // minDate: new Date().toDateString(),
       },
     },
