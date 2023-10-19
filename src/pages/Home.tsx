@@ -86,7 +86,7 @@ export const Home: React.FC = () => {
         <div className="p-5 bg-clip-border rounded-xl bg-white text-gray-700 shadow-md">
           <div className="font-bold mb-5">Available Loads</div>
           {(listLoads || []).map((data: Transaction | null, idx) => (
-            <div key={idx} className="flex space-x-3 flex-wrap">
+            <div key={idx} className="flex space-x-3 flex-wrap border-b-2 border-blue-gray-500 pb-2 mb-2">
               <div>
                 {idx + 1}. 
               </div>
@@ -105,7 +105,7 @@ export const Home: React.FC = () => {
         <div className="p-5 bg-clip-border rounded-xl bg-white text-gray-700 shadow-md">
           <div className="font-bold mb-5">Quotations</div>
           {(listQuotations || []).map((data: Quotation | null, idx) => (
-            <div key={idx} className="flex space-x-3 flex-wrap">
+            <div key={idx} className="flex space-x-3 flex-wrap border-b-2 border-blue-gray-500 pb-2 mb-2">
               <div>
                 {idx + 1}. 
               </div>
