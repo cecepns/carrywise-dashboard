@@ -2,7 +2,7 @@ import { ChangeEvent, memo, useCallback, useEffect, useRef, useState } from 'rea
 import { Input } from '@/components/molecules';
 import { debounce } from 'lodash';
 import classNames from 'classnames';
-import { Icon } from '../atoms';
+import { Icon } from '@/components/atoms';
 
 export type AddressApi = {
   osm_id: number;
@@ -55,12 +55,12 @@ export const InputSearchAddress: React.FC<InputSearchAddressProps> = memo(({
       }
     }, [onClickAddress]);
 
-  const handleChange = useCallback(
-    (value: string) => {
-      if(onChange) {
-        onChange(value);
-      }
-    }, [onChange]);
+  // const handleChange = useCallback(
+  //   (value: string) => {
+  //     if(onChange) {
+  //       onChange(value);
+  //     }
+  //   }, [onChange]);
 
   const searchHandler = useCallback(
     async (directSearch?: string) => {
@@ -70,7 +70,7 @@ export const InputSearchAddress: React.FC<InputSearchAddressProps> = memo(({
           setShowList(true);
           setFoundAddresses([]);
           const raw = await fetch(
-            `${import.meta.env.VITE_GEOCODING_API}/search?q=${directSearch || search}`,
+            `${import.meta.env.VITE_GEOCODING_API}/search?q=${directSearch || search}&api_key=${import.meta.env.VITE_MAPS_CO_API_KEY}`,
           );
           const result = await raw.json();
           setFoundAddresses(result);
@@ -98,7 +98,7 @@ export const InputSearchAddress: React.FC<InputSearchAddressProps> = memo(({
     // handleChange(val);
     setSearch(val);
     searchAddressFn(val);
-  }, [handleChange, searchAddressFn]);
+  }, [searchAddressFn]);
 
   const onFocus = useCallback(() => {
     setShowList(true);
