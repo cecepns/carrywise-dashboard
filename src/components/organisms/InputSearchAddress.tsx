@@ -22,7 +22,7 @@ interface InputSearchAddressProps {
 export const InputSearchAddress: React.FC<InputSearchAddressProps> = memo(({
   value,
   label,
-  onChange,
+  // onChange,
   onClickAddress,
 }) => {
   const [search, setSearch] = useState<string>('');
