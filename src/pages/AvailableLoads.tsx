@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from 'react';
 // import { useNavigate } from 'react-router-dom';
 
-import { Typography } from '@/components/atoms';
+import { Icon, Typography } from '@/components/atoms';
 import { Table } from '@/components/molecules';
 import moment from 'moment';
 import { Transaction, useGetTravelBoardsLazyQuery } from '@/generated/graphql';
@@ -17,12 +17,13 @@ export const AvailableLoads: React.FC = () => {
 
   const dataCarriers = useMemo(() => data?.transactions, [data?.transactions]);
 
+  console.log(dataCarriers);
+
   useEffect(() => {
     getListTrips({
       fetchPolicy: 'cache-and-network',
       variables: {
         filter: {
-          // minDate: moment().format('YYYY-MM-DD'),
           initBy: AuthEnum.Sender,
           isRequested: false,
           isDeal: false,
@@ -30,38 +31,6 @@ export const AvailableLoads: React.FC = () => {
       }
     });
   }, [getListTrips]);
-
-  //   const handleDelete = useCallback((id: number) => {
-  //     const confirm = window.confirm('Are you sure want to delete this data ?');
-
-  //     if(confirm) {
-  //       deleteTravelBoard({
-  //         fetchPolicy: 'network-only',
-  //         variables: {
-  //           input: {
-  //             transactionId: id.toString()
-  //           },
-  //         },
-  //         onCompleted: ({ deleteTravelBoard: res }) => {
-  //           if(res?.status === 'success') {
-  //             getListTrips({
-  //               fetchPolicy: 'cache-and-network',
-  //               variables: {
-  //                 filter: {
-  //                   minDate: moment().format('YYYY-MM-DD')
-  //                 }
-  //               }
-  //             });
-  //           }
-  //         },
-  //         onError: e => {
-  //           console.log(e);
-  //           alert(e);
-  //         },
-  //       });
-  //     }
-
-  //   }, [deleteTravelBoard, getListTrips]);
 
   const columnsCarrier = useMemo(() => [
     {
@@ -79,14 +48,39 @@ export const AvailableLoads: React.FC = () => {
       Header: 'Sender Name',
       accessor: 'firstname',
       Cell: (cell: Transaction) => (
-        <span>{cell.firstname || cell.sender?.firstname}</span>
+        <div className="flex flex-col space-y-3">
+          <div className="flex">
+            <Icon name="user" size="sm" type="solid" className="pr-2" /> <span>{cell.firstname || cell.sender?.firstname || '-'}</span>
+          </div>
+          <div className="flex">
+            <Icon name="phone" size="sm" type="solid" className="pr-2"/> {cell.sender?.phone}
+          </div>
+        </div>
       ),
     },
     {
       Header: 'Carrier Name',
       accessor: 'firstname',
       Cell: (cell: Transaction) => (
-        <span>{cell.firstname || cell.carrier?.firstname || '-'}</span>
+        <div className="flex flex-col space-y-5">
+          <div className="flex">
+            <Icon name="user" size="sm" type="solid" className="pr-2" /> <span>{cell.firstname || cell.carrier?.firstname || '-'}</span>
+          </div>
+          <div className="flex">
+            <Icon name="phone" type="solid" className="pr-2" size="sm" /> {cell.carrier?.phone}
+          </div>
+        </div>
+      ),
+    },
+    {
+      Header: 'Packages',
+      accessor: 'packages',
+      Cell: (cell: Transaction) => (
+        <div>
+          {(cell.packages || []).map((v, idx) => {
+            return (<div key={idx}>{idx + 1} - {v?.category}</div>);
+          })}
+        </div>
       ),
     },
     {
@@ -97,16 +91,6 @@ export const AvailableLoads: React.FC = () => {
       Header: 'Destination',
       accessor: 'destinationAddress.location',
     },
-    // {
-    //   Header: 'Action',
-    //   accessor: 'action',
-    //   Cell: (cell: Transaction) => (
-    //     <div className="flex space-x-3">
-    //       <Button variant="success">Edit</Button>
-    //       <Button variant="danger">Delete</Button>
-    //     </div>
-    //   ),
-    // },
   ], []);
 
   return (
@@ -115,7 +99,6 @@ export const AvailableLoads: React.FC = () => {
         <Typography>
           Available Loads
         </Typography>
-        {/* <Button className="w-[110px]" onClick={() => navigate('/dashboard/travel-bulletin/add')}>Add</Button> */}
       </div>
       <Table columns={columnsCarrier} data={dataCarriers}/>
     </div> 

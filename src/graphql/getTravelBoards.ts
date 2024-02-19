@@ -27,6 +27,13 @@ export const GET_TRAVEL_BOARDS = gql`
         }
         ratingAverage
       }
+      packages {
+        image
+        category
+        volumeValue
+        weightValue
+        comment
+      }
       sender {
         firstname
         lastname

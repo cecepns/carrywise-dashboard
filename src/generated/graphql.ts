@@ -160,6 +160,7 @@ export type Mutation = {
   updateNotificationToken?: Maybe<Response>;
   updateProfile?: Maybe<Session>;
   updateRating?: Maybe<Response>;
+  updateSenderTransactionDate?: Maybe<Response>;
   updateTransactionDone?: Maybe<Response>;
   updateVerifiedEmail?: Maybe<Response>;
 };
@@ -242,6 +243,11 @@ export type MutationUpdateProfileArgs = {
 
 export type MutationUpdateRatingArgs = {
   input?: InputMaybe<UpdateRatingInput>;
+};
+
+
+export type MutationUpdateSenderTransactionDateArgs = {
+  input?: InputMaybe<UpdateSenderTransactionDateInput>;
 };
 
 
@@ -738,6 +744,11 @@ export type Weight = {
   value?: Maybe<Scalars['Float']['output']>;
 };
 
+export type UpdateSenderTransactionDateInput = {
+  date: Scalars['Date']['input'];
+  transactionId: Scalars['ID']['input'];
+};
+
 export type SignInMutationVariables = Exact<{
   input?: InputMaybe<SignInInput>;
 }>;
@@ -776,7 +787,7 @@ export type GetTravelBoardsQueryVariables = Exact<{
 }>;
 
 
-export type GetTravelBoardsQuery = { __typename?: 'Query', transactions?: Array<{ __typename?: 'Transaction', id?: any | null, firstname?: string | null, lastname?: string | null, date?: any | null, time?: string | null, fleetVolume?: number | null, pickupAddress?: { __typename?: 'Address', location?: string | null } | null, destinationAddress?: { __typename?: 'Address', location?: string | null } | null, carrier?: { __typename?: 'Carrier', firstname?: string | null, lastname?: string | null, phone?: string | null, ratingAverage?: number | null, url?: { __typename?: 'SessionUrl', image?: string | null } | null, ratings?: Array<{ __typename?: 'Rating', value?: number | null } | null> | null } | null, sender?: { __typename?: 'Sender', firstname?: string | null, lastname?: string | null, phone?: string | null, ratingAverage?: number | null, url?: { __typename?: 'SessionUrl', image?: string | null } | null, ratings?: Array<{ __typename?: 'Rating', value?: number | null } | null> | null } | null } | null> | null };
+export type GetTravelBoardsQuery = { __typename?: 'Query', transactions?: Array<{ __typename?: 'Transaction', id?: any | null, firstname?: string | null, lastname?: string | null, date?: any | null, time?: string | null, fleetVolume?: number | null, pickupAddress?: { __typename?: 'Address', location?: string | null } | null, destinationAddress?: { __typename?: 'Address', location?: string | null } | null, carrier?: { __typename?: 'Carrier', firstname?: string | null, lastname?: string | null, phone?: string | null, ratingAverage?: number | null, url?: { __typename?: 'SessionUrl', image?: string | null } | null, ratings?: Array<{ __typename?: 'Rating', value?: number | null } | null> | null } | null, packages?: Array<{ __typename?: 'Package', image?: string | null, category?: string | null, volumeValue?: number | null, weightValue?: number | null, comment?: string | null } | null> | null, sender?: { __typename?: 'Sender', firstname?: string | null, lastname?: string | null, phone?: string | null, ratingAverage?: number | null, url?: { __typename?: 'SessionUrl', image?: string | null } | null, ratings?: Array<{ __typename?: 'Rating', value?: number | null } | null> | null } | null } | null> | null };
 
 export type StripeChargetListQueryVariables = Exact<{
   filter?: InputMaybe<StripeChargeListInput>;
@@ -1071,6 +1082,13 @@ export const GetTravelBoardsDocument = gql`
         value
       }
       ratingAverage
+    }
+    packages {
+      image
+      category
+      volumeValue
+      weightValue
+      comment
     }
     sender {
       firstname
