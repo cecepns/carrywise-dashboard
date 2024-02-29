@@ -8,3 +8,4 @@ export * from './Payments';
 export * from './AvailableTrips';
 export * from './Trips';
 export * from './Quotations';
+export * from './WhatsApp';

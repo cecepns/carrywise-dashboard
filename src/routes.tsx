@@ -8,7 +8,8 @@ import {
   Quotations,
   AvailableLoads,
   AvailableTrips,
-  Payments
+  Payments,
+  WhatsApp
 } from '@/pages';
 import { Icon } from '@/components/atoms';
 export interface PageRoutes {
@@ -73,6 +74,12 @@ export const routes: Layout[] = [
         name: 'payments',
         path: '/payment',
         element: <Payments />,
+      },
+      {
+        icon: <Icon type="solid" name="gear" className="text-white"/>,
+        name: 'WhatsApp Settings',
+        path: '/whatsapp',
+        element: <WhatsApp />,
       },
     ],
   },
