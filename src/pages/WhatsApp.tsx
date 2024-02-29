@@ -13,7 +13,7 @@ export const WhatsApp = () => {
   const { data:dataCarriers } = useGetCarrierListQuery();
   const [sendMessageWa, { loading: loadingSendMessage }] = useSendMessageWhatsAppMutation();
   const [getSessionsWa] = useGetSessionsWhatsAppLazyQuery();
-  const [deleteSessionWa, {loading: loadingDeleteSessions}] = useDeleteSessionWhatsAppMutation();
+  const [deleteSessionWa, { loading: loadingDeleteSessions }] = useDeleteSessionWhatsAppMutation();
   const [createSessionWa, { loading: loadingCreateSession }] = useCreateSessionWhatsAppMutation();
 
   const dataCarriersList = useMemo(() => dataCarriers?.carrierList, [dataCarriers]);
@@ -125,10 +125,12 @@ export const WhatsApp = () => {
 
             {sessions.length > 0 ? (
               <div>
-                {sessions.map((v, idx) => (
+                {sessions.map((v:any, idx:number) => (
                   <div key={idx.toString()} className="flex items-center space-x-3">
                     <Typography className="bg-green-600 mb-0 text-white rounded px-2 w-fit mb-2" key={idx.toString()}>{idx + 1} - {v}</Typography>
-                    <Button size="sm" variant="danger" onClick={() => deleteSession(v)}> delete </Button>
+                    <Button size="sm" disabled={loadingDeleteSessions} variant="danger" onClick={() => deleteSession(v)}> {
+                      loadingDeleteSessions ? 'Loading....' : 'Delete'
+                    } </Button>
                   </div>
                 ))}
               </div>
