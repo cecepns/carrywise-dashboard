@@ -36,7 +36,9 @@ export const WhatsApp = () => {
         setLoading(false);
         return alert('Can\'t create session more than 1, please delete session');
       }
-      const raw = await fetch(`${import.meta.env.VITE_ENDPOINT_API}/start-session?session=${sessionName}`);
+      const raw = await fetch(`${import.meta.env.VITE_ENDPOINT_API}/start-session?session=${sessionName}`, {
+        mode: 'no-cors'
+      });
       const res: CreateSessionRes = await raw.json();
 
       setLoading(false);
@@ -56,7 +58,9 @@ export const WhatsApp = () => {
   const deleteSession = useCallback(async (v:string) => {
 
     try {
-      const raw = await fetch(`${import.meta.env.VITE_ENDPOINT_API}/delete-session?session=${v}`);
+      const raw = await fetch(`${import.meta.env.VITE_ENDPOINT_API}/delete-session?session=${v}`, {
+        mode: 'no-cors'
+      });
       const res = await raw.json();
 
       if(res) {
@@ -75,6 +79,7 @@ export const WhatsApp = () => {
       setLoadingSendMessage(true);
       const raw = await fetch(`${import.meta.env.VITE_ENDPOINT_API}/send-message`, {
         method: 'POST',
+        mode: 'no-cors',
         headers: {
           'Content-Type': 'application/json',
           // 'Content-Type': 'application/x-www-form-urlencoded',
@@ -103,7 +108,9 @@ export const WhatsApp = () => {
     const fn = async () => {
 
       try {
-        const raw = await fetch(`${import.meta.env.VITE_ENDPOINT_API}/sessions?key=carrywiseadmin`);
+        const raw = await fetch(`${import.meta.env.VITE_ENDPOINT_API}/sessions?key=carrywiseadmin`, {
+          mode: 'no-cors'
+        });
         const res = await raw.json();
 
         setSessions(res?.data);
