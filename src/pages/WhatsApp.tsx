@@ -1,20 +1,24 @@
 import { useCallback, useEffect, useState, useMemo } from 'react';
 import { Button, Typography } from '@/components/atoms';
 import { Input } from '@/components/molecules';
-import { useGetCarrierListQuery } from '@/generated/graphql';
-
-interface CreateSessionRes {
-  data: { qr: string };
-}
+import {
+  useCreateSessionWhatsAppMutation,
+  useDeleteSessionWhatsAppMutation,
+  useGetCarrierListQuery,
+  useGetSessionsWhatsAppLazyQuery,
+  useSendMessageWhatsAppMutation
+} from '@/generated/graphql';
 
 export const WhatsApp = () => {
-  const { data } = useGetCarrierListQuery();
+  const { data:dataCarriers } = useGetCarrierListQuery();
+  const [sendMessageWa, { loading: loadingSendMessage }] = useSendMessageWhatsAppMutation();
+  const [getSessionsWa] = useGetSessionsWhatsAppLazyQuery();
+  const [deleteSessionWa, {loading: loadingDeleteSessions}] = useDeleteSessionWhatsAppMutation();
+  const [createSessionWa, { loading: loadingCreateSession }] = useCreateSessionWhatsAppMutation();
 
-  const dataCarriers = useMemo(() => data?.carrierList, [data]);
+  const dataCarriersList = useMemo(() => dataCarriers?.carrierList, [dataCarriers]);
 
-  const [loading, setLoading] = useState(false);
-  const [loadingSendMessage, setLoadingSendMessage] = useState(false);
-  const [sessions, setSessions] = useState<string[]>([]);
+  const [sessions, setSessions] = useState<any>([]);
   const [sessionName, setSessionName] = useState('');
   const [qrCode, setQrCode] = useState('');
   const [form, setForm] = useState({
@@ -29,101 +33,86 @@ export const WhatsApp = () => {
     }));
   }, []);
 
-  const createSession = useCallback(async () => {
+  const createSession = useCallback(() => {
     try {
-      setLoading(true);
-      if (sessions.length > 0) {
-        setLoading(false);
-        return alert('Can\'t create session more than 1, please delete session');
-      }
-      const raw = await fetch(`${import.meta.env.VITE_ENDPOINT_API}/start-session?session=${sessionName}`, {
-        mode: 'no-cors'
+      createSessionWa({
+        variables: {
+          input: {
+            sessionName
+          }
+        },
+        onCompleted: ({ createSessionWhatsApp : res }) => {
+          setQrCode(res?.qr ?? '');
+          setSessions([sessionName]);
+          alert('Success create session');
+
+          setTimeout(() => {
+            setQrCode('');
+          }, 30000);
+        },
       });
-      const res: CreateSessionRes = await raw.json();
 
-      setLoading(false);
-      setQrCode(res?.data?.qr);
-      setSessions([sessionName]);
-      alert('Success create session');
-
-      setTimeout(() => {
-        setQrCode('');
-      }, 30000);
     } catch (error) {
-      setLoading(false);
       alert('Failed create session');
     }
-  }, [sessionName, sessions.length]);
+  }, [createSessionWa, sessionName]);
 
-  const deleteSession = useCallback(async (v:string) => {
-
-    try {
-      const raw = await fetch(`${import.meta.env.VITE_ENDPOINT_API}/delete-session?session=${v}`, {
-        mode: 'no-cors'
-      });
-      const res = await raw.json();
-
-      if(res) {
+  const deleteSession = useCallback((v:string) => {
+    deleteSessionWa({
+      variables: {
+        input: {
+          sessionName: v ?? '',
+        },
+      },
+      onCompleted: ({ deleteSessionWhatsApp : res }) => {
+        alert('Success delete sessions');
         setSessions([]);
-        alert('Success delete session');
+        console.log(res);
+      },
+      onError: () => {
+        alert('Failed delete sessions');
       }
-  
-    } catch (error) {
-      alert('Failed delete session');
-    }
+    },
+    );
    
-  }, []);
+  }, [deleteSessionWa]);
 
   const sendMessage = useCallback(async () => {
-    try {
-      setLoadingSendMessage(true);
-      const raw = await fetch(`${import.meta.env.VITE_ENDPOINT_API}/send-message`, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: {
-          'Content-Type': 'application/json',
-          // 'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: JSON.stringify({
-          session: sessions[0],
-          to: form.phone?.replace('+', ''),
-          text: form.message
-        })
-      });
-      const res = await raw.json();
-
-      if(res) {
-        setLoadingSendMessage(false);
-        alert('Success send message');
+    
+    sendMessageWa({
+      variables: {
+        input: {
+          data: [{
+            isGroup: false,
+            to: form.phone?.replace('+', ''),
+            text: form.message
+          }],
+          sessionId: sessions[0],
+        }
+      },
+      onCompleted: () => {
+        alert('Success send Message');
+      },
+      onError: () => {
+        alert('Failed send Message');
       }
-
-    } catch (error) {
-      setLoadingSendMessage(false);
-      setLoading(false);
-      alert('Failed send message');
-    }
-  }, [form.message, form.phone, sessions]);
+    });
+  }, [form.message, form.phone, sendMessageWa, sessions]);
 
   useEffect(() => {
     const fn = async () => {
-
-      try {
-        const raw = await fetch(`${import.meta.env.VITE_ENDPOINT_API}/sessions?key=carrywiseadmin`, {
-          mode: 'no-cors'
-        });
-        const res = await raw.json();
-
-        setSessions(res?.data);
-  
-        console.log(res);
-      } catch (error) {
-        console.log('err', error);        
-      }
-
+      getSessionsWa({
+        fetchPolicy: 'network-only',
+        onCompleted: ({ getSessionsWhatsApp : res }) => {
+          setSessions(res?.data);
+          console.log(res);
+        }
+      },
+      );
     };
 
     fn();
-  }, []);
+  }, [getSessionsWa]);
 
   return (
     <div className="mt-12">
@@ -147,8 +136,8 @@ export const WhatsApp = () => {
           </div>
           <div className="bg-clip-border rounded-xl bg-white shadow-md p-5">
             <Input label="Session name" onChange={v => setSessionName(v)}/>
-            <Button className="my-3" disabled={loading || sessionName.length < 2} onClick={createSession}>
-              {loading ? 'Loading...' : 'Create new sessions'}
+            <Button className="my-3" disabled={loadingCreateSession || sessionName.length < 2} onClick={createSession}>
+              {loadingCreateSession ? 'Loading...' : 'Create new sessions'}
             </Button>
 
             {qrCode && sessions.length > 0 && (
@@ -164,7 +153,7 @@ export const WhatsApp = () => {
             Send Message 
           </Typography>
           <select name="carrier" className="border border-gray-700 rounded" onChange={e => inputChangeHandler('phone')(e.target.value)}>
-            {(dataCarriers || []).map((v:any, idx) => (
+            {(dataCarriersList || []).map((v:any, idx) => (
               <option key={idx.toString()} value={v?.phone}>{v?.firstname}</option>
             ))}
           </select>

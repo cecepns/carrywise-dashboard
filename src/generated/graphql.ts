@@ -98,6 +98,10 @@ export type CreateSenderTransactionInput = {
   time?: InputMaybe<Scalars['String']['input']>;
 };
 
+export type CreateSessionWhatsAppInput = {
+  sessionName: Scalars['String']['input'];
+};
+
 export type CreateTravelBoardInput = {
   date: Scalars['Date']['input'];
   destinationAddress: AddressInput;
@@ -112,6 +116,10 @@ export type CreateTravelBoardInput = {
 
 export type DeleteAccountInput = {
   reason: Scalars['String']['input'];
+};
+
+export type DeleteSessionWhatsAppInput = {
+  sessionName: Scalars['String']['input'];
 };
 
 export type DeleteTravelBoardInput = {
@@ -147,11 +155,14 @@ export type Mutation = {
   createCarrierQuotation?: Maybe<Response>;
   createCarrierTransaction?: Maybe<Response>;
   createSenderTransaction?: Maybe<Response>;
+  createSessionWhatsApp?: Maybe<SessionsWaType>;
   createTravelBoard?: Maybe<Response>;
   deleteAccount?: Maybe<Response>;
+  deleteSessionWhatsApp?: Maybe<SessionsWaType>;
   deleteTravelBoard?: Maybe<Response>;
   forgotPassword?: Maybe<Response>;
   resetPassword?: Maybe<Response>;
+  sendMessageWhatsApp?: Maybe<SendMessageWaType>;
   signIn?: Maybe<Session>;
   signOut?: Maybe<Response>;
   signUp?: Maybe<Session>;
@@ -186,6 +197,11 @@ export type MutationCreateSenderTransactionArgs = {
 };
 
 
+export type MutationCreateSessionWhatsAppArgs = {
+  input?: InputMaybe<CreateSessionWhatsAppInput>;
+};
+
+
 export type MutationCreateTravelBoardArgs = {
   input?: InputMaybe<CreateTravelBoardInput>;
 };
@@ -193,6 +209,11 @@ export type MutationCreateTravelBoardArgs = {
 
 export type MutationDeleteAccountArgs = {
   input?: InputMaybe<DeleteAccountInput>;
+};
+
+
+export type MutationDeleteSessionWhatsAppArgs = {
+  input?: InputMaybe<DeleteSessionWhatsAppInput>;
 };
 
 
@@ -208,6 +229,11 @@ export type MutationForgotPasswordArgs = {
 
 export type MutationResetPasswordArgs = {
   input?: InputMaybe<ResetPasswordInput>;
+};
+
+
+export type MutationSendMessageWhatsAppArgs = {
+  input?: InputMaybe<SendMessageWhatsAppInput>;
 };
 
 
@@ -321,6 +347,7 @@ export type PromoFilter = {
 export type Query = {
   __typename?: 'Query';
   carrierList?: Maybe<Array<Maybe<Carrier>>>;
+  getSessionsWhatsApp?: Maybe<SessionsWaType>;
   phoneCodes?: Maybe<Array<Maybe<PhoneCode>>>;
   productCategories?: Maybe<Array<Maybe<ProductCategory>>>;
   promo?: Maybe<Promo>;
@@ -448,6 +475,22 @@ export type Response = {
   status?: Maybe<Scalars['String']['output']>;
 };
 
+export type SendMessageWaInput = {
+  isGroup?: InputMaybe<Scalars['Boolean']['input']>;
+  text?: InputMaybe<Scalars['String']['input']>;
+  to?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type SendMessageWaType = {
+  __typename?: 'SendMessageWaType';
+  status?: Maybe<Scalars['String']['output']>;
+};
+
+export type SendMessageWhatsAppInput = {
+  data?: InputMaybe<Array<InputMaybe<SendMessageWaInput>>>;
+  sessionId?: InputMaybe<Scalars['String']['input']>;
+};
+
 export type Sender = {
   __typename?: 'Sender';
   address?: Maybe<Address>;
@@ -507,6 +550,14 @@ export type SessionUrl = {
   idCard?: Maybe<Scalars['String']['output']>;
   image?: Maybe<Scalars['String']['output']>;
   transportLicense?: Maybe<Scalars['String']['output']>;
+};
+
+export type SessionsWaType = {
+  __typename?: 'SessionsWaType';
+  data?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
+  message?: Maybe<Scalars['String']['output']>;
+  qr?: Maybe<Scalars['String']['output']>;
+  status?: Maybe<Scalars['String']['output']>;
 };
 
 export type SignInInput = {
@@ -826,6 +877,32 @@ export type GetCarrierListQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetCarrierListQuery = { __typename?: 'Query', carrierList?: Array<{ __typename?: 'Carrier', firstname?: string | null, email?: string | null, country?: string | null, phone?: string | null, gender?: GenderEnum | null, fleetType?: string | null } | null> | null };
+
+export type GetSessionsWhatsAppQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetSessionsWhatsAppQuery = { __typename?: 'Query', getSessionsWhatsApp?: { __typename?: 'SessionsWaType', status?: string | null, data?: Array<string | null> | null } | null };
+
+export type DeleteSessionWhatsAppMutationVariables = Exact<{
+  input?: InputMaybe<DeleteSessionWhatsAppInput>;
+}>;
+
+
+export type DeleteSessionWhatsAppMutation = { __typename?: 'Mutation', deleteSessionWhatsApp?: { __typename?: 'SessionsWaType', status?: string | null } | null };
+
+export type CreateSessionWhatsAppMutationVariables = Exact<{
+  input?: InputMaybe<CreateSessionWhatsAppInput>;
+}>;
+
+
+export type CreateSessionWhatsAppMutation = { __typename?: 'Mutation', createSessionWhatsApp?: { __typename?: 'SessionsWaType', status?: string | null, qr?: string | null } | null };
+
+export type SendMessageWhatsAppMutationVariables = Exact<{
+  input?: InputMaybe<SendMessageWhatsAppInput>;
+}>;
+
+
+export type SendMessageWhatsAppMutation = { __typename?: 'Mutation', sendMessageWhatsApp?: { __typename?: 'SendMessageWaType', status?: string | null } | null };
 
 
 export const SignInDocument = gql`
@@ -1442,3 +1519,138 @@ export function useGetCarrierListLazyQuery(baseOptions?: Apollo.LazyQueryHookOpt
 export type GetCarrierListQueryHookResult = ReturnType<typeof useGetCarrierListQuery>;
 export type GetCarrierListLazyQueryHookResult = ReturnType<typeof useGetCarrierListLazyQuery>;
 export type GetCarrierListQueryResult = Apollo.QueryResult<GetCarrierListQuery, GetCarrierListQueryVariables>;
+export const GetSessionsWhatsAppDocument = gql`
+    query GetSessionsWhatsApp {
+  getSessionsWhatsApp {
+    status
+    data
+  }
+}
+    `;
+
+/**
+ * __useGetSessionsWhatsAppQuery__
+ *
+ * To run a query within a React component, call `useGetSessionsWhatsAppQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetSessionsWhatsAppQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetSessionsWhatsAppQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetSessionsWhatsAppQuery(baseOptions?: Apollo.QueryHookOptions<GetSessionsWhatsAppQuery, GetSessionsWhatsAppQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetSessionsWhatsAppQuery, GetSessionsWhatsAppQueryVariables>(GetSessionsWhatsAppDocument, options);
+      }
+export function useGetSessionsWhatsAppLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetSessionsWhatsAppQuery, GetSessionsWhatsAppQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetSessionsWhatsAppQuery, GetSessionsWhatsAppQueryVariables>(GetSessionsWhatsAppDocument, options);
+        }
+export type GetSessionsWhatsAppQueryHookResult = ReturnType<typeof useGetSessionsWhatsAppQuery>;
+export type GetSessionsWhatsAppLazyQueryHookResult = ReturnType<typeof useGetSessionsWhatsAppLazyQuery>;
+export type GetSessionsWhatsAppQueryResult = Apollo.QueryResult<GetSessionsWhatsAppQuery, GetSessionsWhatsAppQueryVariables>;
+export const DeleteSessionWhatsAppDocument = gql`
+    mutation DeleteSessionWhatsApp($input: DeleteSessionWhatsAppInput) {
+  deleteSessionWhatsApp(input: $input) {
+    status
+  }
+}
+    `;
+export type DeleteSessionWhatsAppMutationFn = Apollo.MutationFunction<DeleteSessionWhatsAppMutation, DeleteSessionWhatsAppMutationVariables>;
+
+/**
+ * __useDeleteSessionWhatsAppMutation__
+ *
+ * To run a mutation, you first call `useDeleteSessionWhatsAppMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteSessionWhatsAppMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteSessionWhatsAppMutation, { data, loading, error }] = useDeleteSessionWhatsAppMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useDeleteSessionWhatsAppMutation(baseOptions?: Apollo.MutationHookOptions<DeleteSessionWhatsAppMutation, DeleteSessionWhatsAppMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteSessionWhatsAppMutation, DeleteSessionWhatsAppMutationVariables>(DeleteSessionWhatsAppDocument, options);
+      }
+export type DeleteSessionWhatsAppMutationHookResult = ReturnType<typeof useDeleteSessionWhatsAppMutation>;
+export type DeleteSessionWhatsAppMutationResult = Apollo.MutationResult<DeleteSessionWhatsAppMutation>;
+export type DeleteSessionWhatsAppMutationOptions = Apollo.BaseMutationOptions<DeleteSessionWhatsAppMutation, DeleteSessionWhatsAppMutationVariables>;
+export const CreateSessionWhatsAppDocument = gql`
+    mutation CreateSessionWhatsApp($input: CreateSessionWhatsAppInput) {
+  createSessionWhatsApp(input: $input) {
+    status
+    qr
+  }
+}
+    `;
+export type CreateSessionWhatsAppMutationFn = Apollo.MutationFunction<CreateSessionWhatsAppMutation, CreateSessionWhatsAppMutationVariables>;
+
+/**
+ * __useCreateSessionWhatsAppMutation__
+ *
+ * To run a mutation, you first call `useCreateSessionWhatsAppMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateSessionWhatsAppMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createSessionWhatsAppMutation, { data, loading, error }] = useCreateSessionWhatsAppMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateSessionWhatsAppMutation(baseOptions?: Apollo.MutationHookOptions<CreateSessionWhatsAppMutation, CreateSessionWhatsAppMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateSessionWhatsAppMutation, CreateSessionWhatsAppMutationVariables>(CreateSessionWhatsAppDocument, options);
+      }
+export type CreateSessionWhatsAppMutationHookResult = ReturnType<typeof useCreateSessionWhatsAppMutation>;
+export type CreateSessionWhatsAppMutationResult = Apollo.MutationResult<CreateSessionWhatsAppMutation>;
+export type CreateSessionWhatsAppMutationOptions = Apollo.BaseMutationOptions<CreateSessionWhatsAppMutation, CreateSessionWhatsAppMutationVariables>;
+export const SendMessageWhatsAppDocument = gql`
+    mutation SendMessageWhatsApp($input: SendMessageWhatsAppInput) {
+  sendMessageWhatsApp(input: $input) {
+    status
+  }
+}
+    `;
+export type SendMessageWhatsAppMutationFn = Apollo.MutationFunction<SendMessageWhatsAppMutation, SendMessageWhatsAppMutationVariables>;
+
+/**
+ * __useSendMessageWhatsAppMutation__
+ *
+ * To run a mutation, you first call `useSendMessageWhatsAppMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSendMessageWhatsAppMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [sendMessageWhatsAppMutation, { data, loading, error }] = useSendMessageWhatsAppMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useSendMessageWhatsAppMutation(baseOptions?: Apollo.MutationHookOptions<SendMessageWhatsAppMutation, SendMessageWhatsAppMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<SendMessageWhatsAppMutation, SendMessageWhatsAppMutationVariables>(SendMessageWhatsAppDocument, options);
+      }
+export type SendMessageWhatsAppMutationHookResult = ReturnType<typeof useSendMessageWhatsAppMutation>;
+export type SendMessageWhatsAppMutationResult = Apollo.MutationResult<SendMessageWhatsAppMutation>;
+export type SendMessageWhatsAppMutationOptions = Apollo.BaseMutationOptions<SendMessageWhatsAppMutation, SendMessageWhatsAppMutationVariables>;
