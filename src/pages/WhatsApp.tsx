@@ -9,14 +9,27 @@ import {
   useSendMessageWhatsAppMutation
 } from '@/generated/graphql';
 
+import Select, { CSSObjectWithLabel } from 'react-select';
+
 export const WhatsApp = () => {
+  const [usersSelect, setUsersSelect] = useState([]);
   const { data:dataCarriers } = useGetCarrierListQuery();
   const [sendMessageWa, { loading: loadingSendMessage }] = useSendMessageWhatsAppMutation();
   const [getSessionsWa] = useGetSessionsWhatsAppLazyQuery();
   const [deleteSessionWa, { loading: loadingDeleteSessions }] = useDeleteSessionWhatsAppMutation();
   const [createSessionWa, { loading: loadingCreateSession }] = useCreateSessionWhatsAppMutation();
 
-  const dataCarriersList = useMemo(() => dataCarriers?.carrierList, [dataCarriers]);
+  const dataCarriersList = useMemo(() => {
+    if(dataCarriers?.carrierList) {
+      return dataCarriers?.carrierList.map((v) => {
+        return {
+          label: v?.firstname,
+          value: v?.phone
+        };
+      }); 
+    }
+    return [];
+  }, [dataCarriers]);
 
   const [sessions, setSessions] = useState<any>([]);
   const [sessionName, setSessionName] = useState('');
@@ -78,15 +91,18 @@ export const WhatsApp = () => {
   }, [deleteSessionWa]);
 
   const sendMessage = useCallback(async () => {
-    
+    const data = usersSelect.map((v:any) => {
+      return {
+        isGroup: false,
+        to: v.value?.replace('+', ''),
+        text: form.message,
+      };
+    });
+
     sendMessageWa({
       variables: {
         input: {
-          data: [{
-            isGroup: false,
-            to: form.phone?.replace('+', ''),
-            text: form.message
-          }],
+          data,
           sessionId: sessions[0],
         }
       },
@@ -97,7 +113,11 @@ export const WhatsApp = () => {
         alert('Failed send Message');
       }
     });
-  }, [form.message, form.phone, sendMessageWa, sessions]);
+  }, [form.message, sendMessageWa, sessions, usersSelect]);
+
+  const handleChangeSelect = useCallback((v: any) => {
+    setUsersSelect(v);
+  }, []);
 
   useEffect(() => {
     const fn = async () => {
@@ -154,12 +174,22 @@ export const WhatsApp = () => {
           <Typography>
             Send Message 
           </Typography>
-          <select name="carrier" className="border border-gray-700 rounded" onChange={e => inputChangeHandler('phone')(e.target.value)}>
-            {(dataCarriersList || []).map((v:any, idx) => (
-              <option key={idx.toString()} value={v?.phone}>{v?.firstname}</option>
-            ))}
-          </select>
-          <Input className="w-fit" label="Message" onChange={inputChangeHandler('message')}/>
+          <Select
+            isMulti
+            name="colors"
+            options={dataCarriersList}
+            className="basic-multi-select"
+            classNamePrefix="select"
+            onChange={handleChangeSelect}
+            styles={{
+              valueContainer: (base: CSSObjectWithLabel) => ({
+                ...base,
+                overflow: 'auto',
+                maxHeight: '100px',
+              }),
+            }}
+          />
+          <Input isTextArea className="w-fit h-32" label="Message" onChange={inputChangeHandler('message')}/>
           <Button className="my-3" disabled={loadingSendMessage || form.message.length < 2} onClick={sendMessage}>
             {loadingSendMessage ? 'Loading...' : 'Send Message'}
           </Button>

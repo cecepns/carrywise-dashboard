@@ -10,6 +10,7 @@ interface InputProps {
   type?: string;
   icon?: React.ReactNode;
   readOnly?: boolean;
+  isTextArea?: boolean;
   onFocus?: () => void;
 }
 
@@ -20,12 +21,13 @@ export const Input: React.FC<InputProps> = memo(({
   icon,
   className,
   type = 'text',
+  isTextArea = false,
   inputClassName,
   ...props
 }) => {
 
   const handleInputChange = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
+    (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       if(onChange) {
         onChange(event.target.value);
       }
@@ -46,14 +48,25 @@ export const Input: React.FC<InputProps> = memo(({
 
   return (
     <div className={wrapperClass}>
-      <input
+      {!isTextArea ? (
+        <input
+          className={inputClass}
+          id={label}
+          type={type}
+          value={value}
+          onChange={handleInputChange}
+          placeholder=" "
+          {...props}
+        />
+      ) : <textarea
         className={inputClass}
         id={label}
-        type={type}
+        rows={10}
         value={value}
         onChange={handleInputChange}
+        placeholder=" "
         {...props}
-      />
+      />}
       <label className={labelClass} htmlFor={label}>
         {label}
       </label>

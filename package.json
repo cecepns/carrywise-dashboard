@@ -31,6 +31,7 @@
     "react-dom": "^18.2.0",
     "react-export-table-to-excel": "^1.0.6",
     "react-router-dom": "^6.12.1",
+    "react-select": "^5.8.0",
     "vite-plugin-ssr": "^0.4.142"
   },
   "devDependencies": {
