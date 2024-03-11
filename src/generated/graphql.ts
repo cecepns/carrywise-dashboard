@@ -60,6 +60,7 @@ export type Carrier = {
   fleetType?: Maybe<Scalars['String']['output']>;
   gender?: Maybe<GenderEnum>;
   id?: Maybe<Scalars['SqlID']['output']>;
+  lang?: Maybe<Scalars['String']['output']>;
   lastname?: Maybe<Scalars['String']['output']>;
   phone?: Maybe<Scalars['String']['output']>;
   ratingAverage?: Maybe<Scalars['Int']['output']>;
@@ -488,6 +489,8 @@ export type SendMessageWaType = {
 
 export type SendMessageWhatsAppInput = {
   data?: InputMaybe<Array<InputMaybe<SendMessageWaInput>>>;
+  destinationAddress?: InputMaybe<Scalars['String']['input']>;
+  pickupAddress?: InputMaybe<Scalars['String']['input']>;
   sessionId?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -876,7 +879,7 @@ export type GetSenderListQuery = { __typename?: 'Query', senderList?: Array<{ __
 export type GetCarrierListQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetCarrierListQuery = { __typename?: 'Query', carrierList?: Array<{ __typename?: 'Carrier', firstname?: string | null, email?: string | null, country?: string | null, phone?: string | null, gender?: GenderEnum | null, fleetType?: string | null } | null> | null };
+export type GetCarrierListQuery = { __typename?: 'Query', carrierList?: Array<{ __typename?: 'Carrier', firstname?: string | null, lastname?: string | null, email?: string | null, country?: string | null, phone?: string | null, gender?: GenderEnum | null, fleetType?: string | null, lang?: string | null } | null> | null };
 
 export type GetSessionsWhatsAppQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1484,11 +1487,13 @@ export const GetCarrierListDocument = gql`
     query GetCarrierList {
   carrierList {
     firstname
+    lastname
     email
     country
     phone
     gender
     fleetType
+    lang
   }
 }
     `;

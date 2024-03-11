@@ -12,7 +12,7 @@ import {
 import Select, { CSSObjectWithLabel } from 'react-select';
 
 export const WhatsApp = () => {
-  const [usersSelect, setUsersSelect] = useState([]);
+  const [usersSelect, setUsersSelect] = useState<any[]>([]);
   const { data:dataCarriers } = useGetCarrierListQuery();
   const [sendMessageWa, { loading: loadingSendMessage }] = useSendMessageWhatsAppMutation();
   const [getSessionsWa] = useGetSessionsWhatsAppLazyQuery();
@@ -23,12 +23,15 @@ export const WhatsApp = () => {
     if(dataCarriers?.carrierList) {
       return dataCarriers?.carrierList.map((v) => {
         return {
-          label: v?.firstname,
-          value: v?.phone
+          label: `${v?.firstname} ${v?.lastname}`,
+          phone: v?.phone,
+          value: v?.email,
+          lang: v?.lang
         };
       }); 
     }
-    return [];
+    
+    return [{ label: 'Select All', value: 'select-all', lang: '' }];
   }, [dataCarriers]);
 
   const [sessions, setSessions] = useState<any>([]);
@@ -94,8 +97,9 @@ export const WhatsApp = () => {
     const data = usersSelect.map((v:any) => {
       return {
         isGroup: false,
-        to: v.value?.replace('+', ''),
+        to: v.phone?.replace('+', ''),
         text: form.message,
+        lang: v?.lang
       };
     });
 
@@ -115,9 +119,15 @@ export const WhatsApp = () => {
     });
   }, [form.message, sendMessageWa, sessions, usersSelect]);
 
-  const handleChangeSelect = useCallback((v: any) => {
-    setUsersSelect(v);
-  }, []);
+  const handleChangeSelect = useCallback((selectOption: any) => {
+    const isSelectAll = selectOption.find((v: {value: string}) => v.value === 'select-all')?.value;
+
+    if(isSelectAll) {
+      setUsersSelect(dataCarriersList);
+    } else {
+      setUsersSelect(selectOption);
+    }
+  }, [dataCarriersList]);
 
   useEffect(() => {
     const fn = async () => {
@@ -177,10 +187,11 @@ export const WhatsApp = () => {
           <Select
             isMulti
             name="colors"
-            options={dataCarriersList}
+            options={[{ value: 'select-all', label: '✓ Select All' }, ...dataCarriersList]}
             className="basic-multi-select"
             classNamePrefix="select"
             onChange={handleChangeSelect}
+            value={usersSelect}
             styles={{
               valueContainer: (base: CSSObjectWithLabel) => ({
                 ...base,

@@ -19,11 +19,13 @@ export const GET_CARRIERLIST = gql`
   query GetCarrierList {
     carrierList {
       firstname
+      lastname
       email
       country
       phone
       gender
       fleetType
+      lang
     }
   }
 `;
