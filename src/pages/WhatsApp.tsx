@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState, useMemo } from 'react';
 import { Button, Typography } from '@/components/atoms';
-import { Input } from '@/components/molecules';
+import { Checkbox, Input } from '@/components/molecules';
 import {
   useCreateSessionWhatsAppMutation,
   useDeleteSessionWhatsAppMutation,
@@ -40,9 +40,12 @@ export const WhatsApp = () => {
   const [form, setForm] = useState({
     phone: '',
     message: '',
+    pickupAddress: '',
+    destinationAddress: '',
+    isMessage: true,
   });
 
-  const inputChangeHandler = useCallback((name:string) => (val:string) => {
+  const inputChangeHandler = useCallback((name:string) => (val:string | boolean) => {
     setForm(prev => ({
       ...prev,
       [name]: val
@@ -108,6 +111,8 @@ export const WhatsApp = () => {
         input: {
           data,
           sessionId: sessions[0],
+          pickupAddress: form.pickupAddress,
+          destinationAddress: form.destinationAddress,
         }
       },
       onCompleted: () => {
@@ -117,7 +122,7 @@ export const WhatsApp = () => {
         alert('Failed send Message');
       }
     });
-  }, [form.message, sendMessageWa, sessions, usersSelect]);
+  }, [form.destinationAddress, form.message, form.pickupAddress, sendMessageWa, sessions, usersSelect]);
 
   const handleChangeSelect = useCallback((selectOption: any) => {
     const isSelectAll = selectOption.find((v: {value: string}) => v.value === 'select-all')?.value;
@@ -135,7 +140,6 @@ export const WhatsApp = () => {
         fetchPolicy: 'network-only',
         onCompleted: ({ getSessionsWhatsApp : res }) => {
           setSessions(res?.data);
-          console.log(res);
         }
       },
       );
@@ -200,8 +204,18 @@ export const WhatsApp = () => {
               }),
             }}
           />
-          <Input isTextArea className="w-fit h-32" label="Message" onChange={inputChangeHandler('message')}/>
-          <Button className="my-3" disabled={loadingSendMessage || form.message.length < 2} onClick={sendMessage}>
+          <div className="relative w-[200px] h-11 grid grid-cols-3 items-center justify-center">
+            <Typography className="text-center"> Message </Typography>
+            <Checkbox wrapperClassName="m-auto" label="block email" value={form.isMessage} onChange={inputChangeHandler('isMessage')} />
+            <Typography className="text-center"> Delivery </Typography>
+          </div>
+          {form.isMessage ? 
+            <Input isTextArea className="w-fit h-32" label="Message" onChange={inputChangeHandler('message')}/> 
+            :<div className="space-y-3">
+              <Input label="Pickup Addresss" value={form.pickupAddress} onChange={inputChangeHandler('pickupAddress')}/>
+              <Input label="Destination Address" value={form.destinationAddress} onChange={inputChangeHandler('destinationAddress')}/>
+            </div>}
+          <Button className="my-3" disabled={loadingSendMessage || (form.isMessage ? form.message.length < 2 : (!form.pickupAddress || !form.destinationAddress))} onClick={sendMessage}>
             {loadingSendMessage ? 'Loading...' : 'Send Message'}
           </Button>
         </div>
